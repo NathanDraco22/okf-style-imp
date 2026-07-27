@@ -1,0 +1,225 @@
+{
+  "main": {
+    "id": "61e865765e1a6a66",
+    "type": "split",
+    "children": [
+      {
+        "id": "90f7fb9b7778e32e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f68efce7d8bf053b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "AGENTS.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "AGENTS"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "9d5cc5078e257a2e",
+    "type": "split",
+    "children": [
+      {
+        "id": "ba1d267875dca24c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "bd55841067f92eb6",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "bf4a7e2092d4d5f4",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "cf56621bc8303bf0",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "2231dc36ffd645d8",
+    "type": "split",
+    "children": [
+      {
+        "id": "2d3f50795689609e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "67f4d126c70d04e9",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "AGENTS.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for AGENTS"
+            }
+          },
+          {
+            "id": "eb4e25743a03068e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "AGENTS.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from AGENTS"
+            }
+          },
+          {
+            "id": "d8f772c971a8594d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "3f027c5ae035d75b",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "df471322268beee6",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "AGENTS.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of AGENTS"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "f68efce7d8bf053b",
+  "lastOpenFiles": [
+    "README.md",
+    "frontend/flutter_dart/patterns/INDEX.md",
+    "AGENTS.md",
+    "frontend/flutter_dart/style/INDEX.md",
+    "backend/python_fastapi/patterns/cli_commands.md",
+    "backend/python_fastapi/style/INDEX.md",
+    "backend/python_fastapi/patterns/INDEX.md",
+    "backend/python_fastapi/INDEX.md",
+    "backend/INDEX.md",
+    "frontend/flutter_dart/INDEX.md",
+    "frontend/INDEX.md",
+    "INDEX.md",
+    "frontend/flutter_dart/patterns/cli_commands_flutter.md",
+    "backend/python_fastapi/patterns/index.md",
+    "backend/python_fastapi/patterns/exception_handling.md",
+    "backend/index.md",
+    "frontend/flutter_dart/patterns/data_source_pattern.md",
+    "frontend/flutter_dart/patterns/di_flutter.md",
+    "frontend/flutter_dart/patterns/cubit_states_write.md",
+    "frontend/flutter_dart/patterns/cubit_states_read.md",
+    "frontend/flutter_dart/patterns/search_cubit.md",
+    "frontend/flutter_dart/patterns/screen_structure.md",
+    "frontend/flutter_dart/patterns/responsive_design.md",
+    "frontend/flutter_dart/patterns/read_write_cubits.md",
+    "frontend/flutter_dart/patterns/reactive_repository.md",
+    "frontend/flutter_dart/patterns/query_params.md",
+    "backend/python_fastapi/style",
+    "backend/python_fastapi/patterns",
+    "backend/python_fastapi",
+    "backend",
+    "frontend/flutter_dart/patterns",
+    "frontend/flutter_dart/style",
+    "frontend/flutter_dart",
+    "frontend",
+    "patterns",
+    "style"
+  ]
+}

@@ -1,0 +1,76 @@
+---
+type: Pattern
+title: Singleton en DataSource y Collection
+description: Todas las DataSources y Collections implementan singleton para evitar múltiples conexiones y estados inconsistentes.
+tags: [fastapi, singleton, patron, creacional]
+---
+
+# Singleton
+
+DataSources, Collections y servicios globales (MongoService, etc.) usan singleton.
+
+## Variante 1: `__new__` (kardex-server)
+
+```python
+from typing_extensions import Self
+
+class ProductsDataSource:
+    def __new__(cls) -> Self:
+        if not hasattr(cls, "instance"):
+            cls.instance = super().__new__(cls)
+        return cls.instance
+```
+
+Uso:
+
+```python
+ds = ProductsDataSource()  # siempre la misma instancia
+```
+
+## Variante 2: factory classmethod (serum_app_back)
+
+```python
+class ProductsDataSource:
+    _instance: "ProductsDataSource | None" = None
+
+    @classmethod
+    def get_instance(cls) -> "ProductsDataSource":
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+```
+
+Uso:
+
+```python
+ds = ProductsDataSource.get_instance()
+```
+
+## Variante 3: MongoService
+
+```python
+class MongoService:
+    _instance: "MongoService | None" = None
+    _client: AsyncIOMotorClient | None = None
+
+    def __new__(cls) -> Self:
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    async def init_service(self):
+        if self._client is None:
+            self._client = AsyncIOMotorClient(self._mongo_url)
+
+    def get_collection(self, name: str):
+        return self._client[self._db_name][name]
+```
+
+## ¿Dónde se usa singleton?
+
+| Clase | Razón |
+|-------|-------|
+| `MongoService` | Una sola conexión a MongoDB |
+| `DataSource` | Sin estado, no necesita múltiples instancias |
+| `Collection` | Sin estado, el cliente Mongo es compartido |
+| `Repository` | En algunos proyectos (serum) también es singleton |
