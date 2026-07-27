@@ -21,34 +21,31 @@ onion --help
 
 Si el comando falla, instalar ONION CLI antes de continuar.
 
-## Regla #2: Leer convenciones antes de trabajar
+## Workflow para el agente
 
-Antes de crear o modificar código en una tecnología, leer **obligatoriamente** sus guías de estilo y patrones:
+### Fase 1 — Descubrimiento (al iniciar)
+Leer **todos los INDEX.md** para entender la estructura completa del bundle:
 
-### Backend (Python/FastAPI)
+| Orden | Índice | Propósito |
+|---|---|---|
+| 1 | [Raíz](INDEX.md) | Visión general del bundle (frontend + backend) |
+| 2 | [Frontend](frontend/INDEX.md) | Tecnologías frontend |
+| 3 | [Backend](backend/INDEX.md) | Tecnologías backend |
+| 4 | [Flutter/Dart](frontend/flutter_dart/INDEX.md) | Técnicas y patrones Flutter |
+| 5 | [Python/FastAPI](backend/python_fastapi/INDEX.md) | Técnicas y patrones FastAPI |
+
+### Fase 2 — Ejecución (al planificar o codificar)
+Según la tecnología involucrada, leer **obligatoriamente** la sección correspondiente:
+
+#### Backend (Python/FastAPI)
 1. [Estilo FastAPI](backend/python_fastapi/style/INDEX.md) — convenciones de código
 2. [Patrones FastAPI](backend/python_fastapi/patterns/INDEX.md) — patrones de diseño
+3. [CLI Backend](backend/python_fastapi/patterns/cli_commands.md) — comandos `onion` para backend
 
-### Frontend (Flutter/Dart)
+#### Frontend (Flutter/Dart)
 1. [Estilo Flutter](frontend/flutter_dart/style/INDEX.md) — convenciones de código
 2. [Patrones Flutter](frontend/flutter_dart/patterns/INDEX.md) — patrones de diseño
-
-## Cómo usar este bundle
-
-1. **Lee INDEX.md** de cada sección para navegar la estructura.
-2. Los conceptos están organizados en `frontend/` y `backend/`, cada uno con `style/` (guías de estilo) y `patterns/` (patrones de diseño).
-
-## Índices principales (obligatorio leer)
-
-- [Raíz](INDEX.md) — Visión general del bundle.
-- [Frontend](frontend/INDEX.md) — Tecnologías frontend.
-- [Flutter / Dart](frontend/flutter_dart/INDEX.md) — Técnicas y patrones Flutter.
-- [Estilo Flutter](frontend/flutter_dart/style/INDEX.md) — Guías de estilo Flutter.
-- [Patrones Flutter](frontend/flutter_dart/patterns/INDEX.md) — Patrones de diseño Flutter.
-- [Backend](backend/INDEX.md) — Tecnologías backend.
-- [Python / FastAPI](backend/python_fastapi/INDEX.md) — Técnicas y patrones FastAPI.
-- [Estilo FastAPI](backend/python_fastapi/style/INDEX.md) — Guías de estilo FastAPI.
-- [Patrones FastAPI](backend/python_fastapi/patterns/INDEX.md) — Patrones de diseño FastAPI.
+3. [CLI Flutter](frontend/flutter_dart/patterns/cli_commands_flutter.md) — comandos `onion` para frontend
 
 ## Convenciones del bundle
 
