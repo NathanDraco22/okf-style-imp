@@ -11,6 +11,16 @@ Este bundle sigue el formato **Open Knowledge Format (OKF) v0.2**.
 
 Ver [Comandos CLI Backend](backend/python_fastapi/patterns/cli_commands.md) y [Comandos CLI Flutter](frontend/flutter_dart/patterns/cli_commands_flutter.md).
 
+### Verificar instalación
+
+Antes de usar cualquier comando `onion`, verificar que está instalado ejecutando:
+
+```bash
+onion --help
+```
+
+Si el comando falla, instalar ONION CLI antes de continuar.
+
 ## Regla #2: Leer convenciones antes de trabajar
 
 Antes de crear o modificar código en una tecnología, leer **obligatoriamente** sus guías de estilo y patrones:
