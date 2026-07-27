@@ -50,12 +50,10 @@ mixin ReactiveRepository<T> {
 ```dart
 class ItemRepository with ReactiveRepository<Item> {
   final ItemDataSource dataSource;
-  List<Item> _cache = [];
 
   Future<Item> createItem(CreateItem create) async {
     final result = await dataSource.createItem(create.toJson());
     final newItem = Item.fromJson(result);
-    _cache = [newItem, ..._cache];
     notifyItemCreated(newItem);  // ← Notifica al ReadCubit
     return newItem;
   }
@@ -75,13 +73,19 @@ class ReadItemCubit extends Cubit<ReadItemState> {
       final current = state as ReadItemSuccess;
       switch (event) {
         case RepoItemCreated(:final item):
-          emit(current.copyWith(newItems: [item, ...current.items]));
+          emit(current.copyWith(
+            items: [item, ...current.items],
+            newItems: [item, ...current.newItems],
+          ));
         case RepoItemUpdated(:final item):
-          emit(current.copyWith(updatedItems: [item, ...current.items]));
+          emit(current.copyWith(
+            items: current.items.map((i) => i.id == item.id ? item : i).toList(),
+            updatedItems: [item, ...current.updatedItems],
+          ));
         case RepoItemDeleted(:final item):
           emit(current.copyWith(
-            deletedItems: [item, ...current.deletedItems],
             items: current.items.where((i) => i.id != item.id).toList(),
+            deletedItems: [item, ...current.deletedItems],
           ));
       }
     });

@@ -13,7 +13,7 @@ Se separan estrictamente los cubits de lectura y escritura para mantener estados
 
 ## Read Cubit
 
-Responsable de cargar y cachear datos. Nunca muta.
+Responsable de cargar datos. Nunca muta.
 
 ```dart
 class ReadItemCubit extends Cubit<ReadItemState> {
@@ -39,14 +39,22 @@ class ReadItemCubit extends Cubit<ReadItemState> {
   void _handleRepoEvent(RepoEvent event) {
     if (state is! ReadItemSuccess) return;
     final current = state as ReadItemSuccess;
-    if (event is RepoItemCreated) {
-      emit(current.copyWith(newItems: [event.item, ...current.items]));
-    }
-    if (event is RepoItemUpdated) {
-      // Reemplaza item en la lista
-    }
-    if (event is RepoItemDeleted) {
-      // Filtra item de la lista
+    switch (event) {
+      case RepoItemCreated(:final item):
+        emit(current.copyWith(
+          items: [item, ...current.items],
+          newItems: [item, ...current.newItems],
+        ));
+      case RepoItemUpdated(:final item):
+        emit(current.copyWith(
+          items: current.items.map((i) => i.id == item.id ? item : i).toList(),
+          updatedItems: [item, ...current.updatedItems],
+        ));
+      case RepoItemDeleted(:final item):
+        emit(current.copyWith(
+          items: current.items.where((i) => i.id != item.id).toList(),
+          deletedItems: [item, ...current.deletedItems],
+        ));
     }
   }
 

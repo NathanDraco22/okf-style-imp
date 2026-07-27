@@ -77,8 +77,7 @@ class ItemRepository {
       // El SessionCubit detectará el 401 y redirigirá a login
       rethrow;
     } on NoInternetException {
-      // Devolver caché local si está disponible
-      return _cache;
+      rethrow;
     }
   }
 }
