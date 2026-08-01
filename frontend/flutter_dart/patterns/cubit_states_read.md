@@ -48,6 +48,11 @@ final class ReadItemRefreshing extends ReadItemSuccess {
   ReadItemRefreshing(super.items, {super.newItems, super.updatedItems, super.deletedItems});
 }
 
+/// Búsqueda en curso: mantiene los datos visibles mientras llega la respuesta
+final class ReadItemSearching extends ReadItemSuccess {
+  ReadItemSearching(super.items);
+}
+
 final class ReadItemError extends ReadItemState {
   final String message;
   ReadItemError(this.message);
@@ -60,7 +65,19 @@ final class ReadItemError extends ReadItemState {
 Initial → Loading → Success → Refreshing (pull-to-refresh)
                       ↓
                     Error
+              Success → Searching (búsqueda)
 ```
+
+## Búsqueda que conserva datos
+
+Cuando hay una búsqueda en curso, **nunca se vacía la pantalla**: se emite `ReadItemSearching` con los datos actuales y la UI muestra un indicador discreto (barra de progreso lineal), no un spinner central:
+
+```dart
+if (state is ReadItemLoading || state is ReadItemSearching)
+  const LinearProgressIndicator(minHeight: 3),
+```
+
+Al terminar la búsqueda (o al limpiarla), se vuelve a `ReadItemSuccess` con los resultados — o con la cache previa si el query queda vacío. Ver [Paginación Infinita y Búsqueda](pagination_infinite_scroll.md).
 
 ## Uso en UI
 
@@ -82,5 +99,6 @@ BlocBuilder<ReadItemCubit, ReadItemState>(
 
 - **Success** mantiene `newItems`, `updatedItems`, `deletedItems` para animaciones visuales
 - **Refreshing** extiende Success para mantener datos visibles mientras recarga
+- **Searching** extiende Success: los datos visibles nunca se borran mientras se busca
 - **Error** lleva mensaje para mostrar al usuario
-- Todos los estados son `final` excepto Success (que Refreshing extiende)
+- Todos los estados son `final` excepto Success (que Refreshing/Searching extienden)

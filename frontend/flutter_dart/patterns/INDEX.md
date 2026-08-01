@@ -8,6 +8,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 
 - [Flujo Onion en Flutter](flutter_onion_flow.md) — Screen → Cubit → Repository → DataSource → API
 - [Estructura de Pantalla](screen_structure.md) — MultiBlocProvider → BlocListener → BlocBuilder
+- [Segmentación de Vistas UI](view_segmentation.md) — Orquestador, unidades, contexto, fuente de verdad única
 
 ## Modelos y datos
 
@@ -20,7 +21,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 - [Read / Write Cubits](read_write_cubits.md) — Separación estricta de lectura y escritura
 - [Estados de Lectura](cubit_states_read.md) — Initial → Loading → Success → Refreshing → Error
 - [Estados de Escritura](cubit_states_write.md) — Initial → Writing → Created/Updated/Deleted → Error
-- [Search Cubit](search_cubit.md) — Cubit separado para búsqueda por texto
+- [Paginación Infinita y Búsqueda](pagination_infinite_scroll.md) — Scroll infinito + Searching que conserva datos
 
 ## Capa de datos
 
@@ -34,6 +35,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 - [Mediator Pattern](mediator_pattern.md) — InheritedWidget + ChangeNotifier para forms
 - [Manejo de Excepciones](exception_handling_flutter.md) — Jerarquía sellada de errores HTTP
 - [GoRouter](go_router_pattern.md) — StatefulShellRoute + auth redirect
+- [Funciones de Flujo](action_flow_functions.md) — Acciones complejas como funciones top-level
 
 ## CLI
 

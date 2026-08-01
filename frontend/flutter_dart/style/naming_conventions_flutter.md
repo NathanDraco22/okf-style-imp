@@ -33,8 +33,6 @@ tags: [flutter, dart, estilo, naming, convenciones]
 | Read State | `Read{Entity}State` | `ReadPatientState` |
 | Write Cubit | `Write{Entity}Cubit` | `WritePatientCubit` |
 | Write State | `Write{Entity}State` | `WritePatientState` |
-| Search Cubit | `Search{Entity}Cubit` | `SearchPatientCubit` |
-| Search State | `Search{Entity}State` | `SearchPatientState` |
 | DataSource | `{Entity}DataSource` | `PatientsDataSource` |
 | Repository | `{Entity}Repository` | `PatientsRepository` |
 | Create model | `Create{Entity}` | `CreatePatient` |

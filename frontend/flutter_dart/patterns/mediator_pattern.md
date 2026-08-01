@@ -9,6 +9,61 @@ tags: [flutter, mediator, inheritedwidget, changenotifier, patron]
 
 Para pantallas con formularios complejos (facturas, inventario) donde los cubits no son suficientes, se usa un "mediator" que combina `InheritedWidget` + `ChangeNotifier`.
 
+## Variantes
+
+| Variante | Cuándo | Cómo se reconstruye |
+|---|---|---|
+| **InheritedNotifier** | El controlador se crea/estado simple; todos escuchan lo mismo | `dependOnInheritedWidgetOfExactType` propaga cambios |
+| **Exposición + ListenableBuilder** | Controlador estable; secciones con intereses distintos (suscripción granular) | `InheritedWidget` con `updateShouldNotify: false` + `ListenableBuilder` por sección |
+
+Para suscripción granular, el mediator es un `InheritedWidget` **mudo** (solo expone, nunca notifica):
+
+```dart
+class SaleTerminalWebMediator extends InheritedWidget {
+  const SaleTerminalWebMediator({
+    super.key,
+    required super.child,
+    required this.viewController,
+  });
+
+  final SaleTerminalViewController viewController;
+
+  static SaleTerminalWebMediator of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<SaleTerminalWebMediator>()!;
+  }
+
+  @override
+  bool updateShouldNotify(SaleTerminalWebMediator oldWidget) {
+    return false;  // No reconstruye nada: cada sección escucha con ListenableBuilder
+  }
+}
+```
+
+Las secciones leen el controlador del mediator y se suscriben de forma granular:
+
+```dart
+class _CartSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final viewController = SaleTerminalWebMediator.of(context).viewController;
+    return ListenableBuilder(
+      listenable: viewController,
+      builder: (context, _) { /* solo esta sección se reconstruye */ },
+    );
+  }
+}
+```
+
+Los widgets internos también pueden suscribirse a **partes** del controlador:
+
+```dart
+// En un tile: solo el precio se reconstruye al cambiar el nivel de precio
+ListenableBuilder(
+  listenable: priceLevelListenable,
+  builder: (context, _) => Text(NumberFormatter.convertToMoneyLike(price)),
+)
+```
+
 ## ViewController (ChangeNotifier)
 
 ```dart
@@ -118,6 +173,8 @@ final invoice = controller.generateCreateItem();
 ## Reglas
 
 - ViewController es `ChangeNotifier` — llama a `notifyListeners()` en cada mutación
-- Mediator usa `InheritedNotifier<ViewController>` para propagar cambios eficientemente
+- Mediator usa `InheritedNotifier<ViewController>` o `InheritedWidget` mudo + `ListenableBuilder` para propagar cambios eficientemente
+- Variante **exposición**: `updateShouldNotify: false` + `ListenableBuilder` con `listenable` del controlador
 - `of(context)` escucha cambios; `read(context)` solo lee sin escuchar
 - Los formularios complejos se separan en secciones con `part` files para mantenerlos manejables
+- Los getters derivados (totales, validaciones) viven en el ViewController, nunca en la UI

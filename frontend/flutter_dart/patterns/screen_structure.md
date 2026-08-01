@@ -31,11 +31,6 @@ class ItemScreen extends StatelessWidget {
             itemRepository: RepositoryProvider.of<ItemRepository>(ctx),
           ),
         ),
-        BlocProvider(
-          create: (ctx) => SearchItemCubit(
-            itemRepository: RepositoryProvider.of<ItemRepository>(ctx),
-          ),
-        ),
       ],
       child: const _RootScaffold(),
     );
