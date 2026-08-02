@@ -97,7 +97,7 @@ BlocBuilder<ReadItemCubit, ReadItemState>(
 
 ## Detalles clave
 
-- **Success** mantiene `newItems`, `updatedItems`, `deletedItems` para animaciones visuales
+- **Success** mantiene `newItems`, `updatedItems`, `deletedItems` para animaciones visuales — se llenan con los eventos del repositorio (ver [ReactiveRepository Mixin](reactive_repository.md))
 - **Refreshing** extiende Success para mantener datos visibles mientras recarga
 - **Searching** extiende Success: los datos visibles nunca se borran mientras se busca
 - **Error** lleva mensaje para mostrar al usuario

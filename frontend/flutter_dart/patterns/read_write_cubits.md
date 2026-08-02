@@ -15,6 +15,8 @@ Se separan estrictamente los cubits de lectura y escritura para mantener estados
 
 Responsable de cargar datos. Nunca muta.
 
+> Los cambios del WriteCubit llegan al ReadCubit **sin refetch manual**: el repositorio emite eventos que el ReadCubit escucha (ver [ReactiveRepository Mixin](reactive_repository.md)).
+
 ```dart
 class ReadItemCubit extends Cubit<ReadItemState> {
   final ItemRepository itemRepository;

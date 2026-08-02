@@ -9,6 +9,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 - [Flujo Onion en Flutter](flutter_onion_flow.md) — Screen → Cubit → Repository → DataSource → API
 - [Estructura de Pantalla](screen_structure.md) — MultiBlocProvider → BlocListener → BlocBuilder
 - [Segmentación de Vistas UI](view_segmentation.md) — Orquestador, unidades, contexto, fuente de verdad única
+- [ViewController Pattern](view_controller_pattern.md) — Estado en memoria de la pantalla: acciones, mapeo a DTOs, ciclo de vida
 
 ## Modelos y datos
 
