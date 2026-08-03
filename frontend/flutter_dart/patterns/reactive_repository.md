@@ -7,7 +7,7 @@ tags: [flutter, repository, reactivo, stream, patron]
 
 # ReactiveRepository Mixin
 
-> **CLI:** El repositorio se genera con `onion dart {entity}`. El mixin `ReactiveRepository` es manual: se agrega con `with` y los `notifyXxx` se llaman tras cada operación exitosa.
+> **CLI:** `onion dart {entity}`, `onion dart-cubit {entity}` y `onion flutter-module {entity}` preguntan si se genera con ReactiveRepository (default: **No**). Con `--reactive` (o respondiendo Sí al prompt) el CLI genera el mixin en `lib/src/tools/reactive_repo/reactive_repository.dart`, el repository con `with ReactiveRepository<T>` + `notifyXxx` sin cache, y los cubits con suscripción automática al `eventStream`. Ver [cli_commands_flutter.md](cli_commands_flutter.md).
 
 Permite que los WriteCubits notifiquen automáticamente a los ReadCubits cuando los datos cambian, sin refetch manual. El **ReadCubit es la única fuente de verdad** de la lista: el repositorio solo llama al datasource y emite eventos, nunca guarda estado.
 
@@ -169,6 +169,43 @@ WriteCubit.create(dto)
 - **Guard `isClosed`** en los notifiers — evita `add()` sobre un stream cerrado
 - La suscripción se crea en el **constructor del ReadCubit** y se cancela en su `close()`
 - `disposeReactiveRepo()` se llama al cerrar el repositorio (fin de ciclo de vida en DI)
+
+## Cuándo usar reactive vs BlocListener
+
+| Situación | Recomendado | Por qué |
+|-----------|-------------|---------|
+| WriteCubits efímeros (uno por diálogo/edición) | **Reactive** | El WriteCubit puede instanciarse y destruirse sin romper la comunicación: la notificación viaja por el stream del repository, no por el árbol de providers |
+| Varios ReadCubits comparten un repository | **Reactive** | Broadcast stream: todos se enteran de un solo `notify` |
+| Snacks/feedback de éxito (toast "creado") | **Ambos** | Reactive no elimina la necesidad de escuchar el estado del WriteCubit para feedback local; el stream actualiza la lista, el BlocListener (o listener del WriteCubit) muestra el mensaje |
+| Módulo sin escrituras (solo lectura) | **No reactive** | No hay eventos que escuchar |
+| Un solo WriteCubit de ciclo de vida global acoplado al ReadCubit en el mismo provider | **BlocListener** | El acoplamiento por provider es suficiente; reactive agrega complejidad sin beneficio |
+
+> **Ventaja clave de reactive:** el ReadCubit queda desacoplado del WriteCubit. Crear un WriteCubit nuevo dentro de un diálogo (`WriteXxxCubit(repository)`) y cerrarlo al terminar no desincroniza la lista: el ReadCubit ya estaba suscrito al repository.
+
+## Variante fallback: BlocListener + markXxx
+
+Sin reactive (modo clásico generado por defecto), la vista conecta la escritura con la lectura usando `markXxx` manualmente desde un `BlocListener`:
+
+```dart
+BlocListener<WriteItemCubit, WriteItemState>(
+  listener: (context, state) {
+    final readCubit = context.read<ReadItemCubit>();
+    switch (state) {
+      case ItemCreated(:final item):
+        readCubit.markItemCreated(item);
+      case ItemUpdated(:final item):
+        readCubit.markItemUpdated(item);
+      case ItemDeleted(:final item):
+        readCubit.markItemDeleted(item);
+      default:
+        break;
+    }
+  },
+  child: ...,
+)
+```
+
+Este patrón exige que ambos cubits existan en el mismo árbol de providers y que la vista conozca los dos. Funciona para flujos acoplados, pero no permite crear WriteCubits efímeros sin perder la sincronización.
 
 ## Relacionados
 

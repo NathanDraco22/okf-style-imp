@@ -10,6 +10,8 @@ tags: [flutter, cubit, estado, separacion, patron]
 Se separan estrictamente los cubits de lectura y escritura para mantener estados simples y predecibles.
 
 > **CLI:** El comando `onion dart-cubit {entity}` genera ambos cubits (read + write) con sus estados y barrel files. El desarrollador completa los métodos con la lógica de negocio específica.
+>
+> **Reactive:** con `--reactive` (o Sí al prompt) el ReadCubit se genera **suscrito al `eventStream`** del repository (suscripción en el constructor, cancelación en `close()`), y el WriteCubit se genera con el repository inyectado y los métodos `create`/`update`/`delete` implementados con reset a `Initial`. Sin el flag, ambos cubits se generan con TODOs y la sincronización se hace manualmente vía `markXxx` desde la vista. Ver [ReactiveRepository Mixin](reactive_repository.md).
 
 ## Read Cubit
 

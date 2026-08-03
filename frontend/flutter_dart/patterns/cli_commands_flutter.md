@@ -7,6 +7,8 @@ tags: [cli, onion, codegen, flutter, dart, comandos]
 
 # Comandos Onion CLI para Flutter/Dart
 
+> **Versión mínima: onion ≥ 0.6.0** — incluye el flag `--reactive/--no-reactive` con prompt y la generación del mixin `ReactiveRepository` en `tools/reactive_repo/`.
+
 ## Capa completa (DataSource + Repository + Models)
 
 ```bash
@@ -16,6 +18,34 @@ onion dart product
 # Con --output-dir para especificar carpeta
 onion dart product --output-dir lib/src/features
 ```
+
+## Reactive Repository
+
+`onion dart`, `onion dart-cubit` y `onion flutter-module` preguntan **¿Generar con ReactiveRepository? [y/N]** (default: **No**). El flag `--reactive` / `--no-reactive` salta la pregunta (útil en scripts/CI).
+
+```bash
+# Pregunta interactiva (default No)
+onion dart product
+
+# Reactive explícito: genera repo con mixin + cubits suscritos
+onion dart product --reactive
+onion dart-cubit product --reactive
+onion flutter-module product --reactive
+
+# Sin prompt en CI
+onion dart product --no-reactive
+```
+
+Con `--reactive` el CLI genera:
+
+- **`lib/src/tools/reactive_repo/reactive_repository.dart`** — mixin `ReactiveRepository<T>` + eventos `RepoEvent` sellados (idempotente: solo si no existe, desde cualquier comando reactivo)
+- **Repository** — `with ReactiveRepository<XInDb>`, **sin cache en memoria**, `notifyItemCreated/Updated/Deleted` tras cada operación exitosa
+- **ReadCubit** — repository inyectado, suscripción `eventStream` en el constructor, `_handleRepoEvent`, `cancel()` en `close()`
+- **WriteCubit** — repository inyectado, `create`/`update`/`delete` reales con reset a `Initial` después de cada éxito
+
+Sin `--reactive` se mantiene el modo clásico (cache en el repository + `markXxx` manual desde la UI/BlocListener).
+
+> **Regla:** usa reactive cuando quieras instanciar WriteCubits efímeros (p. ej. uno por diálogo) sin perder la comunicación con el ReadCubit, o cuando múltiples ReadCubits deban escuchar el mismo repository. Ver [ReactiveRepository Mixin](reactive_repository.md) para los criterios completos.
 
 ## Modelos (Create, Update, InDb)
 

@@ -7,6 +7,32 @@ tags: [cli, onion, codegen, fastapi, python, comandos]
 
 # Comandos Onion CLI para Python/FastAPI
 
+> **Versión mínima: onion ≥ 0.6.0** — incluye `fastapi-init` con clon del template de GitHub y generación de pymongo async (`AsyncMongoClient`).
+
+## Proyecto completo (flujo canónico)
+
+`onion project fastapi-init` **clona el template canónico de GitHub** ([fastapi-onion-template](https://github.com/NathanDraco22/fastapi-onion-template)) con todo el proyecto: `pyproject.toml`, `Dockerfile`, `uv.lock`, `.vscode/`, `README.md`, `runtime.txt`. Borra el `.git` del clon (proyecto limpio) y renombra los placeholders `examples` según el nombre del proyecto.
+
+```bash
+# 1. Inicializar el proyecto (clona el template completo)
+onion project fastapi-init my_app
+
+# 2. Instalar dependencias
+cd my_app
+uv sync
+
+# 3. Si usas MongoDB: agregar pymongo (el template NO lo incluye a propósito,
+#    es agnóstico de base de datos)
+uv add pymongo
+
+# 4. Generar entidades
+onion crud-mongo product --version 1
+```
+
+> **El template no incluye pymongo a propósito**: sirve como base neutral porque mañana podría usarse otra base de datos. Agrega la dependencia solo cuando el proyecto la necesita.
+>
+> **Paso manual post-clon:** completar `app/core/services_initializer.py` con la inicialización de `MongoService().init_service()`.
+
 ## CRUD completo con módulo
 
 ```bash
@@ -41,8 +67,11 @@ onion router product --version 1
 ## Proyecto completo
 
 ```bash
-# Sobrescribe app/ con la plantilla FastAPI completa
-onion project
+# Clona el template de GitHub completo (pyproject, Dockerfile, uv.lock, .vscode)
+onion project fastapi-init my_app
+
+# Solo sobrescribe app/ con el scaffolding base (sin configs de proyecto)
+onion project fastapi-app
 ```
 
 ## Reglas

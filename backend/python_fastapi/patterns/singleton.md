@@ -48,10 +48,12 @@ ds = ProductsDataSource.get_instance()
 
 ## Variante 3: MongoService
 
+Usa el driver async nativo de **pymongo ≥ 4.17** (`AsyncMongoClient`), que reemplaza a motor (deprecado):
+
 ```python
 class MongoService:
     _instance: "MongoService | None" = None
-    _client: AsyncIOMotorClient | None = None
+    _client: AsyncMongoClient | None = None
 
     def __new__(cls) -> Self:
         if cls._instance is None:
@@ -60,15 +62,17 @@ class MongoService:
 
     async def init_service(self):
         if self._client is None:
-            self._client = AsyncIOMotorClient(self._mongo_url)
+            self._client = AsyncMongoClient(self._mongo_url)
 
-    def get_client(self) -> AsyncIOMotorClient:
+    def get_client(self) -> AsyncMongoClient:
         """Cliente completo — usado por transacciones multi-collección."""
         return self._client
 
     def get_collection(self, name: str):
         return self._client[self._db_name][name]
 ```
+
+> El CLI (`crud-mongo`) genera `MongoService` con `AsyncMongoClient` + `AsyncCollection` (`from pymongo import AsyncMongoClient`, `from pymongo.asynchronous.collection import AsyncCollection`). Motor ya no se usa.
 
 - `get_collection()` — para operaciones simples de una colección (CRUD estándar)
 - `get_client()` + `session.start_transaction()` — para transacciones atómicas multi-colección (ver [Transacciones MongoDB](mongo_transactions.md))

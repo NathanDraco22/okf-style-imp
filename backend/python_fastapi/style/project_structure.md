@@ -86,4 +86,4 @@ packages/
 ## Reglas
 
 - **Regla #1 — Onion CLI:** todo el scaffolding se genera con `onion` (`onion project`, `onion crud`, `onion crud-mongo`, `onion repo`, `onion repo-mongo`, `onion router`), nunca manualmente. Ver [Comandos Onion CLI](../patterns/cli_commands.md)
-- `onion project` genera la plantilla base del proyecto; cada entidad nueva se agrega con `onion crud`/`crud-mongo`, que registra la capa completa y actualiza el router maestro
+- `onion project fastapi-init` clona el template canónico de GitHub (proyecto completo: pyproject, Dockerfile, uv.lock); cada entidad nueva se agrega con `onion crud`/`crud-mongo`, que registra la capa completa y actualiza el router maestro
