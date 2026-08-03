@@ -11,6 +11,8 @@ Este bundle sigue el formato **Open Knowledge Format (OKF) v0.2**.
 
 Ver [Comandos CLI Backend](backend/python_fastapi/patterns/cli_commands.md) y [Comandos CLI Flutter](frontend/flutter_dart/patterns/cli_commands_flutter.md).
 
+> **Notas CLI (onion ≥ 0.6.0):** `onion project fastapi-init` clona el template de GitHub; en comandos Flutter (`onion dart`, `onion dart-cubit`, `onion flutter-module`) hay flag `--reactive/--no-reactive` para el ReactiveRepository.
+
 ### Verificar instalación
 
 Antes de usar cualquier comando `onion`, verificar que está instalado ejecutando:
