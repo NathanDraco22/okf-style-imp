@@ -31,6 +31,8 @@ async def get_all_products(self) -> list[ProductInDb]:
     return [ProductInDb.model_validate(r) for r in results]
 ```
 
+> Los registros soft-deleteados **no** llegan aquí: el filtro `isDeleted` se aplica en la Collection (ver [Soft Delete](soft_delete.md)).
+
 ## Get By ID
 
 ```python

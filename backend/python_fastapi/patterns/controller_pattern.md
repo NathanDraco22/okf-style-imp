@@ -58,6 +58,8 @@ products_controller = ProductsController(
 )
 ```
 
+> **Criterio de cableado:** con MongoDB → `get_instance()` en DataSource/Collection; sin MongoDB → instanciación directa en el Controller. Ver [Cableado de Dependencias](di_wiring.md).
+
 ## Reglas
 
 - **Constructor** recibe el Repository (nunca lo instancia internamente)

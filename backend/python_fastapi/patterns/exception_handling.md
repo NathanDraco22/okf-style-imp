@@ -38,7 +38,7 @@ class UnauthorizedException(AppException):
 ## Mapeo a HTTP
 
 ```python
-# regis_exception_handlers.py
+# register_exception_handlers.py
 
 def register_exception_handlers(app: FastAPI):
     @app.exception_handler(NotFoundException)

@@ -7,6 +7,8 @@ tags: [flutter, cubit, estados, sealed, patron]
 
 # Estados de Lectura
 
+> **CLI:** `onion dart-cubit {entity}` genera la jerarquía de estados sellados (read + write) con sus clases base. El desarrollador completa los campos según la entidad.
+
 Los Read Cubits usan una jerarquía de estados sellados para representar todas las fases del ciclo de vida de carga de datos.
 
 ## Jerarquía

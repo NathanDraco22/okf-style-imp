@@ -7,6 +7,8 @@ tags: [flutter, repository, reactivo, stream, patron]
 
 # ReactiveRepository Mixin
 
+> **CLI:** El repositorio se genera con `onion dart {entity}`. El mixin `ReactiveRepository` es manual: se agrega con `with` y los `notifyXxx` se llaman tras cada operación exitosa.
+
 Permite que los WriteCubits notifiquen automáticamente a los ReadCubits cuando los datos cambian, sin refetch manual. El **ReadCubit es la única fuente de verdad** de la lista: el repositorio solo llama al datasource y emite eventos, nunca guarda estado.
 
 ## Eventos y mixin

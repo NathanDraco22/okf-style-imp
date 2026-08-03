@@ -33,13 +33,13 @@ async def create_product(self, product: dict) -> None:
     await self.__collection.insert_one(product)
 
 async def fetch_all_products(self) -> list[dict[str, Any]]:
-    cursor = self.__collection.find()
+    cursor = self.__collection.find({"isDeleted": False})
     result = await cursor.to_list(length=None)
     await cursor.close()
     return result
 
 async def fetch_product_by_id(self, product_id: str) -> dict[str, Any] | None:
-    return await self.__collection.find_one({"id": product_id})
+    return await self.__collection.find_one({"id": product_id, "isDeleted": False})
 
 async def update_product_by_id(
     self, product_id: str, product: dict
@@ -63,7 +63,7 @@ async def delete_product_by_id(self, product_id: str) -> dict[str, Any] | None:
 | Operación | Método | Detalle |
 |-----------|--------|---------|
 | Create | `insert_one` | Recibe dict completo con id generado |
-| Read (all) | `find()` + `to_list()` | Siempre cerrar cursor |
-| Read (one) | `find_one({"id": id})` | Busca por campo `id`, no `_id` |
+| Read (all) | `find()` + `to_list()` | Siempre cerrar cursor; filtrar `isDeleted: False` (ver [Soft Delete](soft_delete.md)) |
+| Read (one) | `find_one({"id": id})` | Busca por campo `id`, no `_id`; filtrar `isDeleted: False` |
 | Update | `find_one_and_update` + `$set` | `ReturnDocument.AFTER` para devolver el doc actualizado |
 | Delete | `find_one_and_update` + `$set: isDeleted` | Soft delete, no elimina físicamente |

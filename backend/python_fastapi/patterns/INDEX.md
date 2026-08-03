@@ -3,6 +3,8 @@
 Patrones de diseño y técnicas usados en proyectos FastAPI con arquitectura Onion.
 
 > **Generado por Onion CLI:** El CLI `onion` genera el scaffolding completo de cada patrón: estructura de archivos, clases del CRUD, barrel files, y registro automático en el router maestro. El desarrollador completa los campos de los modelos, la lógica de negocio en repositorios y los endpoints custom. Ver [cli_commands.md](cli_commands.md) para la referencia de comandos.
+>
+> **Regla #1 — Prioridad CLI:** toda estructura nueva se genera con Onion CLI (`onion ...`), **nunca a mano**. El CLI ya hace buen trabajo: estructura, capas y registro en routers consistentes. Crear archivos manualmente rompe el patrón.
 
 ## Flujo y arquitectura
 
@@ -20,7 +22,7 @@ Patrones de diseño y técnicas usados en proyectos FastAPI con arquitectura Oni
 ## Modelos y respuestas
 
 - [Patrón de Modelos](model_pattern.md) — Base/Create/Update/InDb
-- [ListResponse](list_response.md) — Respuesta genérica paginada
+- [ListResponse](list_response.md) — Respuesta genérica de listas con count
 
 ## Persistencia
 

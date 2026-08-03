@@ -7,6 +7,8 @@ tags: [flutter, viewcontroller, changenotifier, estado, pantalla, patron, arquit
 
 # ViewController Pattern
 
+> **CLI:** `onion flutter-module {feature}` genera la base del módulo (screen, cubits, vistas y widgets). El `view_controller.dart`, el mediator y los action flows se agregan siguiendo este patrón — el CLI no los genera.
+
 El **ViewController** es el estado local de la pantalla en memoria. Es un `ChangeNotifier` que:
 
 1. **Concentra el estado efímero** de la screen (items de un carrito, cliente seleccionado, método de pago, fecha, descripción).
@@ -31,14 +33,18 @@ Vive solo mientras la pantalla existe: se crea en el `State` de la Screen y muer
 ```
 feature/
 ├── feature_screen.dart          # Crea el ViewController en initState
+├── feature_mediator.dart        # InheritedWidget mudo, compartido web/mobile
 ├── view_controller.dart         # ChangeNotifier: estado + acciones + mapeo
-├── cubit/
+├── cubit/                       # Solo si el feature lo amerita (ver jerarquía de cubits)
 │   ├── read_feature_cubit.dart  # Carga datos del servidor (canal lectura)
 │   └── write_feature_cubit.dart # Persiste DTOs (canal escritura)
-├── web/   (screen, mediator, sections/)
-├── mobile/ (screen, mediator)
+├── web/     (screen, sections/, widgets/)
+├── mobile/  (screen, widgets/)
+├── tablet/  (futuro, mismo patrón)
 └── actions/ (feature_payment.dart, feature_completion.dart)  # Flujos UI
 ```
+
+**Jerarquía de cubits:** `lib/cubits/{entity}/` para cubits **globales** (auth, sesión) → `lib/src/cubits/{entity}/` para cubits **compartidos** entre módulos → `modules/{feature}/cubit/` solo cuando la lógica es exclusiva del feature (ver [Estructura del Proyecto Flutter](../style/project_structure_flutter.md)).
 
 Flujo de datos:
 

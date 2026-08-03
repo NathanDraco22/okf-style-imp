@@ -47,4 +47,4 @@ class ProductsDataSource:
 - **Solo dicts** — nunca recibe ni devuelve objetos Pydantic
 - **Sin lógica de negocio** — no genera IDs, no calcula timestamps, no valida
 - **Respeta la firma** — cada método del DataSource coincide 1:1 con la Collection
-- **Singleton** — `get_instance()` o `__new__` según el proyecto (ver [singleton](./singleton.md))
+- **Singleton** — `get_instance()` o `__new__` según el proyecto (ver [singleton](./singleton.md)); con MongoDB se usa `Collection.get_instance()` (ver [Cableado de Dependencias](di_wiring.md))

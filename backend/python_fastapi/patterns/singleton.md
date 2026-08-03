@@ -62,9 +62,16 @@ class MongoService:
         if self._client is None:
             self._client = AsyncIOMotorClient(self._mongo_url)
 
+    def get_client(self) -> AsyncIOMotorClient:
+        """Cliente completo — usado por transacciones multi-collección."""
+        return self._client
+
     def get_collection(self, name: str):
         return self._client[self._db_name][name]
 ```
+
+- `get_collection()` — para operaciones simples de una colección (CRUD estándar)
+- `get_client()` + `session.start_transaction()` — para transacciones atómicas multi-colección (ver [Transacciones MongoDB](mongo_transactions.md))
 
 ## ¿Dónde se usa singleton?
 

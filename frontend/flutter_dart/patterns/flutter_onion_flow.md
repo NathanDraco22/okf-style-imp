@@ -14,7 +14,7 @@ La arquitectura Onion organiza el código en capas con dependencia unidirecciona
 ```
 Screen (UI)
   → Cubit (Estado)
-    → Repository (Lógica de negocio + caché)
+    → Repository (Lógica de negocio)
       → DataSource (HttpService mixin)
         → API (HTTP)
 ```
@@ -23,9 +23,9 @@ Screen (UI)
 
 | Capa | Ubicación | Responsabilidad |
 |------|-----------|-----------------|
-| **Screen** | `lib/src/modules/{feature}/view/` | Widgets UI, BlocBuilder, BlocListener |
-| **Cubit** | `lib/src/cubits/{entity}/` o `src/modules/{feature}/cubit/` | Estado de la UI, llama al Repository |
-| **Repository** | `packages/*/domain/repositories/` | Lógica de negocio, caché en memoria, convierte modelos |
+| **Screen** | `lib/src/modules/{feature}/` | Widgets UI, BlocBuilder, BlocListener |
+| **Cubit** | `lib/cubits/{entity}/` (globales), `lib/src/cubits/{entity}/` (compartidos) o `modules/{feature}/cubit/` (solo si lo amerita) | Estado de la UI, llama al Repository |
+| **Repository** | `packages/*/domain/repositories/` | Lógica de negocio, convierte modelos |
 | **DataSource** | `packages/*/data/` | Cliente HTTP con `HttpService` mixin, singletons |
 | **Service** | `packages/*/services/` | HTTP raw, Hive, manejo de excepciones |
 

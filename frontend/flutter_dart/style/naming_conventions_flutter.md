@@ -21,6 +21,23 @@ tags: [flutter, dart, estilo, naming, convenciones]
 | Barrel | `{name}.dart` | `data_sources.dart`, `repositories.dart` |
 | Widget | `{widget_name}.dart` | `client_selector.dart` |
 | Dialog | `{entity}_form_dialog.dart` | `patient_form_dialog.dart` |
+| Viewer | `viewers/{entity}_viewer.dart` | `invoice_viewer.dart` |
+| Editor | `editors/{entity}_editor_dialog.dart` | `unit_editor_dialog.dart` |
+| Inspector | `inspectors/{entity}_inspector.dart` | `invoice_inspector.dart` |
+| Bottom modal | `modals/{action}_bottom_modal.dart` | `confirm_send_bottom_modal.dart` |
+| Result model | `models/{entity}_result.dart` | `unit_result.dart` |
+
+## Funciones show
+
+| Elemento | Convención | Ejemplo |
+|----------|-----------|---------|
+| Mostrar viewer | `show{Entity}Viewer(context, entity)` | `showInvoiceViewer(context, invoice)` |
+| Mostrar inspector | `show{Entity}Inspector(context, entity)` | `showInvoiceInspector(context, invoice)` |
+| Editar / crear | `show{Entity}Editor(context, {initial...})` | `showUnitEditor(context, initialUnits: units)` |
+| Buscar / seleccionar | `show{Entity}Search(context, {...})` | `showProductSearch(context, restrictStock: true)` |
+| Bottom modal | `show{Action}BottomModal(context, {...})` | `showConfirmSendBottomModal(context, title: 'Enviar')` |
+
+Todas devuelven `Future<T?>` (ver [Patrón Dialog/Modal](dialog_show_functions.md)).
 
 ## Clases
 
@@ -28,7 +45,7 @@ tags: [flutter, dart, estilo, naming, convenciones]
 |----------|-----------|---------|
 | Screen widget | `{Feature}Screen` | `PatientsScreen` |
 | ViewController | `{Feature}ViewController` | `ClientInvoiceViewController` |
-| Mediator | `{Feature}Mediator` | `ClientInvoiceWebMediator` |
+| Mediator | `{Feature}Mediator` | `ClientInvoiceMediator` |
 | Read Cubit | `Read{Entity}Cubit` | `ReadPatientCubit` |
 | Read State | `Read{Entity}State` | `ReadPatientState` |
 | Write Cubit | `Write{Entity}Cubit` | `WritePatientCubit` |
@@ -57,10 +74,13 @@ class ClientSelectorCard extends StatelessWidget { ... }
 
 | Carpeta | Contenido |
 |---------|-----------|
-| `cubits/{entity}/` | Read + Write cubits de una entidad |
-| `modules/{feature}/view/` | Screens de la feature |
-| `modules/{feature}/view/mobile/` | Versión mobile |
-| `modules/{feature}/view/web/` | Versión web |
-| `modules/{feature}/view/web/sections/` | Secciones part de web |
-| `modules/{feature}/widgets/` | Widgets del módulo |
-| `modules/{feature}/cubit/` | Cubits del módulo |
+| `lib/cubits/{entity}/` | Cubits **globales** de la app (auth, sesión, modo) |
+| `lib/src/cubits/{entity}/` | Cubits **compartidos** entre módulos (entidades multi-feature) |
+| `modules/{feature}/{feature}_screen.dart` | Entry point del módulo (crea el ViewController, MultiBlocProvider) |
+| `modules/{feature}/{feature}_mediator.dart` | InheritedWidget mudo compartido web/mobile |
+| `modules/{feature}/view_controller.dart` | ChangeNotifier (estado local de la pantalla) |
+| `modules/{feature}/cubit/` | Cubits del módulo — **solo cuando lo amerita** |
+| `modules/{feature}/mobile/` | Versión mobile |
+| `modules/{feature}/web/` | Versión web |
+| `modules/{feature}/web/sections/` | Secciones part de web |
+| `modules/{feature}/widgets/` | Widgets compartidos del módulo |

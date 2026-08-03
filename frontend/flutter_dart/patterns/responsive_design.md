@@ -14,18 +14,17 @@ Las pantallas que necesitan adaptación mobile/web se organizan con directorios 
 ```
 client_invoices/
 ├── client_invoices_screen.dart          # Entry point, detecta plataforma
+├── client_invoices_mediator.dart        # InheritedWidget mudo compartido web/mobile
 ├── view_controller.dart                 # ChangeNotifier compartido
-├── cubit/
+├── cubit/                               # Solo si el feature lo amerita
 │   ├── write_invoice_cubit.dart
 │   └── write_invoice_state.dart
 ├── mobile/
-│   ├── mediator.dart                    # InheritedWidget para mobile
 │   ├── client_invoices_screen_mobile.dart
 │   └── widgets/
 │       ├── product_selection_card.dart
 │       └── invoice_summary_card.dart
 ├── web/
-│   ├── mediator.dart                    # InheritedWidget para web
 │   ├── client_invoices_screen_web.dart  # part + sections
 │   ├── sections/
 │   │   ├── header_section.dart          # part of screen_web.dart
@@ -59,8 +58,8 @@ class ClientInvoicesScreen extends StatelessWidget {
     final isMobile = context.isMobile();
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => WriteItemCubit(repo: context.read())),
-        BlocProvider(create: (_) => ReadItemCubit(repo: context.read())),
+        BlocProvider(create: (_) => WriteItemCubit(repo: context.read<ItemRepository>())),
+        BlocProvider(create: (_) => ReadItemCubit(repo: context.read<ItemRepository>())),
       ],
       child: isMobile
           ? const _MobileScaffold()
@@ -74,7 +73,7 @@ class ClientInvoicesScreen extends StatelessWidget {
 
 ```dart
 // web/client_invoices_screen_web.dart
-import 'dart:html';  // o imports web-specific
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';  // o imports web-only
 part 'sections/header_section.dart';
 part 'sections/content_section.dart';
 
@@ -104,5 +103,5 @@ class _WebScaffold extends StatelessWidget {
 
 - Los `part files` permiten que las secciones web accedan a clases privadas del mismo archivo
 - Los widgets compartidos van en `widgets/` raíz del módulo
-- `mediator.dart` puede ser distinto entre mobile y web si la lógica de UI difiere
+- El `mediator` es **compartido en la raíz del módulo** (`{feature}_mediator.dart`); solo se duplica por plataforma cuando una necesita exponer más datos que el ViewController (ver [Mediator Pattern](mediator_pattern.md))
 - El `view_controller.dart` (ChangeNotifier) se comparte entre ambas plataformas

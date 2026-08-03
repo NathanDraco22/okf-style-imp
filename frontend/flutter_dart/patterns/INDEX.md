@@ -2,7 +2,9 @@
 
 Patrones de diseño y técnicas usados en Flutter y Dart.
 
-> **Generado por Onion CLI:** El CLI `onion` genera el scaffolding completo de cada patrón (archivos, clases, CRUD básico, barrel files). El desarrollador completa la lógica de negocio específica (modelos con campos reales, reglas de negocio en repositorios, endpoints adicionales). Ver [cli_commands.md](../../../backend/python_fastapi/patterns/cli_commands.md) para la referencia de comandos.
+> **Generado por Onion CLI:** El CLI `onion` genera el scaffolding completo de cada patrón (archivos, clases, CRUD básico, barrel files). El desarrollador completa la lógica de negocio específica (modelos con campos reales, reglas de negocio en repositorios, endpoints adicionales). Ver [cli_commands_flutter.md](cli_commands_flutter.md) para la referencia de comandos.
+>
+> **Regla #1 — Prioridad CLI:** toda estructura nueva se genera con Onion CLI (`onion ...`), **nunca a mano**. El CLI ya hace buen trabajo: estructura, clases y barrels consistentes. Crear archivos manualmente rompe el patrón.
 
 ## Flujo y arquitectura
 
@@ -14,7 +16,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 ## Modelos y datos
 
 - [Patrón de Modelos Flutter](flutter_models.md) — Create/Update/InDb con fromJson/toJson
-- [ListResponse Flutter](list_response_flutter.md) — Response genérico paginado
+- [ListResponse Flutter](list_response_flutter.md) — Response genérico de listas con count
 - [Query Params Tipados](query_params.md) — Filtros con objetos toMap()
 
 ## State Management (Cubits)
@@ -37,6 +39,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 - [Manejo de Excepciones](exception_handling_flutter.md) — Jerarquía sellada de errores HTTP
 - [GoRouter](go_router_pattern.md) — StatefulShellRoute + auth redirect
 - [Funciones de Flujo](action_flow_functions.md) — Acciones complejas como funciones top-level
+- [Patrón Dialog/Modal](dialog_show_functions.md) — Show functions fuera del router: viewers, editors, searchers, bottom modals
 
 ## CLI
 

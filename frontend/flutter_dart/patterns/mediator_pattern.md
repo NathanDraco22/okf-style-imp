@@ -7,6 +7,8 @@ tags: [flutter, mediator, inheritedwidget, changenotifier, patron]
 
 # Patrón Mediator
 
+> **CLI:** El módulo se genera con `onion flutter-module {feature}`. El mediator es manual: un `InheritedWidget` propio del módulo que expone el ViewController (el CLI no lo genera).
+
 Para pantallas con formularios complejos (facturas, inventario) donde los cubits no son suficientes, se usa un "mediator" que combina `InheritedWidget` + `ChangeNotifier`.
 
 ## Variantes
@@ -19,8 +21,8 @@ Para pantallas con formularios complejos (facturas, inventario) donde los cubits
 Para suscripción granular, el mediator es un `InheritedWidget` **mudo** (solo expone, nunca notifica):
 
 ```dart
-class SaleTerminalWebMediator extends InheritedWidget {
-  const SaleTerminalWebMediator({
+class SaleTerminalMediator extends InheritedWidget {
+  const SaleTerminalMediator({
     super.key,
     required super.child,
     required this.viewController,
@@ -28,12 +30,12 @@ class SaleTerminalWebMediator extends InheritedWidget {
 
   final SaleTerminalViewController viewController;
 
-  static SaleTerminalWebMediator of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<SaleTerminalWebMediator>()!;
+  static SaleTerminalMediator of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<SaleTerminalMediator>()!;
   }
 
   @override
-  bool updateShouldNotify(SaleTerminalWebMediator oldWidget) {
+  bool updateShouldNotify(SaleTerminalMediator oldWidget) {
     return false;  // No reconstruye nada: cada sección escucha con ListenableBuilder
   }
 }
@@ -45,7 +47,7 @@ Las secciones leen el controlador del mediator y se suscriben de forma granular:
 class _CartSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final viewController = SaleTerminalWebMediator.of(context).viewController;
+    final viewController = SaleTerminalMediator.of(context).viewController;
     return ListenableBuilder(
       listenable: viewController,
       builder: (context, _) { /* solo esta sección se reconstruye */ },
@@ -132,11 +134,25 @@ class ItemFormMediator extends InheritedNotifier<ItemFormController> {
 
 ## Uso en Screen
 
+El ViewController se crea en el `State` de la pantalla raíz (único dueño del ciclo de vida) y se expone por el mediador:
+
 ```dart
-class ClientInvoicesScreen extends StatelessWidget {
+class ClientInvoicesScreen extends StatefulWidget {
+  @override
+  State<ClientInvoicesScreen> createState() => _ClientInvoicesScreenState();
+}
+
+class _ClientInvoicesScreenState extends State<ClientInvoicesScreen> {
+  late final ItemFormController viewController;
+
+  @override
+  void initState() {
+    super.initState();
+    viewController = ItemFormController();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final viewController = ItemFormController();
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => WriteItemCubit(repo: RepoProvider.of(context))),
@@ -149,6 +165,8 @@ class ClientInvoicesScreen extends StatelessWidget {
   }
 }
 ```
+
+> ⚠️ Nunca crear el controller dentro de `build` (ni en un `StatelessWidget`): se recrearía en cada rebuild y se perdería el estado. Ver [ViewController Pattern](view_controller_pattern.md).
 
 ## Uso en Widgets
 
@@ -175,6 +193,8 @@ final invoice = controller.generateCreateItem();
 - ViewController es `ChangeNotifier` — llama a `notifyListeners()` en cada mutación
 - Mediator usa `InheritedNotifier<ViewController>` o `InheritedWidget` mudo + `ListenableBuilder` para propagar cambios eficientemente
 - Variante **exposición**: `updateShouldNotify: false` + `ListenableBuilder` con `listenable` del controlador
+- **Mediator compartido en la raíz del módulo** (`{feature}_mediator.dart`) — solo se duplica por plataforma (`mobile/`, `web/`) cuando una necesita exponer más datos que el ViewController
 - `of(context)` escucha cambios; `read(context)` solo lee sin escuchar
 - Los formularios complejos se separan en secciones con `part` files para mantenerlos manejables
 - Los getters derivados (totales, validaciones) viven en el ViewController, nunca en la UI
+- El ViewController se crea en el `State` de la pantalla raíz (`initState`), nunca en `build`

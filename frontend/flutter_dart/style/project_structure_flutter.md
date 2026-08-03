@@ -33,40 +33,50 @@ lib/
 │   │   ├── app_config_manager.dart
 │   │   └── access_manager.dart
 │   │
-│   ├── cubits/                       # Cubits por feature (si están fuera de modules)
+│   ├── cubits/                       # Cubits compartidos entre módulos
 │   │   └── transfers/                # read_transfers, write_transfer cubits
 │   │
 │   ├── modules/                      # Módulos de funcionalidad
 │   │   └── {feature}/
 │   │       ├── {feature}_screen.dart  # Entry point (MultiBlocProvider)
-│   │       ├── view_controller.dart   # ChangeNotifier (form state)
-│   │       ├── cubit/
+│   │       ├── {feature}_mediator.dart # InheritedWidget compartido web/mobile
+│   │       ├── view_controller.dart   # ChangeNotifier (estado local de pantalla)
+│   │       ├── cubit/                 # Solo si el feature lo amerita
 │   │       │   ├── read_{entity}_cubit.dart
 │   │       │   ├── read_{entity}_state.dart
 │   │       │   ├── write_{entity}_cubit.dart
 │   │       │   └── write_{entity}_state.dart
 │   │       ├── mobile/
-│   │       │   ├── mediator.dart
 │   │       │   ├── {feature}_screen_mobile.dart
 │   │       │   └── widgets/
 │   │       ├── web/
-│   │       │   ├── mediator.dart
 │   │       │   ├── {feature}_screen_web.dart
 │   │       │   ├── sections/
 │   │       │   │   ├── header_section.dart
 │   │       │   │   └── content_section.dart
 │   │       │   └── widgets/
-│   │       └── widgets/              # Widgets compartidos mobile/web
+│   │       ├── tablet/                # (futuro, mismo patrón que mobile/)
+│   │       ├── modals/               # Bottom sheets específicos del feature
+│   │       └── widgets/              # Widgets compartidos web/mobile
 │   │
 │   └── tools/                        # Utilidades
 │       ├── extensiones.dart          # context.isMobile(), etc.
 │       ├── navigation_tool.dart
-│       ├── loading_dialog.dart
 │       └── exports/
 │
 └── widgets/                          # Widgets globales reutilizables
     ├── buttons/
-    ├── dialogs/
+    ├── dialogs/                      # Dialogs/modals con función show (ver Patrón Dialog/Modal)
+    │   ├── dialog_manager.dart       # Excepción: info/error/confirmar
+    │   ├── loading_dialog_manager.dart # Excepción: loading global
+    │   ├── viewers/                  # show{Entity}Viewer — solo lectura
+    │   ├── inspectors/               # show{Entity}Inspector — análisis detallado
+    │   ├── editors/                  # show{Entity}Editor — crear/editar
+    │   ├── search_products/          # show{Entity}Search — buscadores
+    │   ├── selectors/                # show{Entity}Selector — selección de entidad
+    │   └── models/                   # {entity}_result.dart — modelos de resultado
+    ├── modals/                       # Bottom sheets genéricos
+    │   └── {action}_bottom_modal.dart
     ├── tables/
     └── gates/                        # RolePermissionGate, ExpirationGate
 ```
@@ -111,8 +121,11 @@ packages/kardex_business/
 
 ## Reglas
 
+- **Regla #1 — Onion CLI:** toda estructura nueva se genera con `onion` (`onion dart`, `onion dart-cubit`, `onion flutter-module`, `onion barrel`, ...), nunca manualmente. Ver [Comandos Onion CLI Flutter](../patterns/cli_commands_flutter.md)
 - Los DataSources, Repositorios y Models van en el **business package** (pure Dart)
 - Las Screens, Cubits y Widgets van en `lib/` del app (Flutter)
+- **Cubits globales** en `lib/cubits/` (auth, sesión) — **compartidos** en `lib/src/cubits/` — de feature solo si lo amerita
+- El **mediator** es compartido en la raíz del módulo (`{feature}_mediator.dart`)
 - Los módulos con versión mobile/web tienen `mobile/` y `web/` subdirectorios
 - Las secciones de web usan `part files` para acceder a miembros privados
 - Los barrel files (`data_sources.dart`, `repositories.dart`, `models.dart`) son generados por el CLI

@@ -1,11 +1,13 @@
 ---
 type: Pattern
 title: ListResponse Genérico (Flutter)
-description: Wrapper genérico para respuestas paginadas de la API, con count, data y un factory fromJson que recibe un converter.
+description: Wrapper genérico para respuestas de listas de la API, con count, data y un factory fromJson que recibe un converter.
 tags: [flutter, response, list, generico, patron]
 ---
 
 # ListResponse
+
+> **CLI:** `onion dart-res` genera el `ListResponse<T>` genérico con su `fromJson`.
 
 Respuesta estándar para endpoints que devuelven listas, mismo patrón que en el backend.
 

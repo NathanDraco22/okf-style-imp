@@ -13,7 +13,7 @@ tags: [estilo, estructura, proyecto, python]
 app/
 ├── main.py                           # Entry point: FastAPI(), include_router, CORS
 ├── app_lifespan.py                   # Startup: init_services(), scheduler
-├── regis_exception_handlers.py       # Mapeo excepciones → HTTP
+├── register_exception_handlers.py  # Mapeo excepciones → HTTP
 ├── .env / .env.example               # Variables de entorno
 │
 ├── api/                              # Capa HTTP
@@ -82,3 +82,8 @@ packages/
         ├── core/                    # Lógica de negocio
         └── tools/                   # Utilidades
 ```
+
+## Reglas
+
+- **Regla #1 — Onion CLI:** todo el scaffolding se genera con `onion` (`onion project`, `onion crud`, `onion crud-mongo`, `onion repo`, `onion repo-mongo`, `onion router`), nunca manualmente. Ver [Comandos Onion CLI](../patterns/cli_commands.md)
+- `onion project` genera la plantilla base del proyecto; cada entidad nueva se agrega con `onion crud`/`crud-mongo`, que registra la capa completa y actualiza el router maestro

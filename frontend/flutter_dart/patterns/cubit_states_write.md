@@ -7,6 +7,8 @@ tags: [flutter, cubit, estados, sealed, write, patron]
 
 # Estados de Escritura
 
+> **CLI:** `onion dart-cubit {entity}` genera la jerarquía de estados sellados (read + write) con sus clases base. El desarrollador completa los campos según la entidad.
+
 Los Write Cubits usan una jerarquía de estados para cada operación de mutación.
 
 ## Jerarquía

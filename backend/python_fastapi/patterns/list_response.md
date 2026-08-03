@@ -1,13 +1,15 @@
 ---
 type: Pattern
 title: ListResponse Genérico
-description: Modelo Pydantic genérico para respuestas paginadas con count y data.
+description: Modelo Pydantic genérico para respuestas de listas con count y data. (No implementa paginación.)
 tags: [fastapi, pydantic, response, patron]
 ---
 
 # ListResponse
 
 Respuesta estándar para endpoints que devuelven listas. Definido en `responses/v1/list_response.py`.
+
+> **Nota:** `ListResponse` agrupa una lista completa con su `count`. Si el módulo necesita paginación real (`limit`/`offset`), se agrega como parámetros de query en el router y `skip`/`limit` en la Collection — el contrato de respuesta no cambia.
 
 ## Implementación
 

@@ -22,6 +22,9 @@ class AppRouter {
   static const String items = '/items';
   static const String itemsList = '/items-list';
   static const String itemDetail = '/items/{id}';
+  static const String patients = '/patients';
+  static const String doctors = '/doctors';
+  static const String orders = '/orders';
 
   // Navigator keys para cada branch
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -29,6 +32,9 @@ class AppRouter {
   static final _itemsNavKey = GlobalKey<NavigatorState>(debugLabel: 'items');
   static final _itemsListNavKey = GlobalKey<NavigatorState>(debugLabel: 'itemsList');
   static final _itemDetailNavKey = GlobalKey<NavigatorState>(debugLabel: 'itemDetail');
+  static final _patientsNavKey = GlobalKey<NavigatorState>(debugLabel: 'patients');
+  static final _doctorsNavKey = GlobalKey<NavigatorState>(debugLabel: 'doctors');
+  static final _ordersNavKey = GlobalKey<NavigatorState>(debugLabel: 'orders');
 
   static GoRouter createRouter(AppSessionCubit sessionCubit) {
     return GoRouter(
@@ -82,13 +88,13 @@ class AppRouter {
             StatefulShellBranch(
               navigatorKey: _patientsNavKey,
               routes: [
-                GoRoute(path: items, builder: (_, __) => const ItemScreen()),
+                GoRoute(path: patients, builder: (_, __) => const PatientsScreen()),
               ],
             ),
             StatefulShellBranch(
               navigatorKey: _doctorsNavKey,
               routes: [
-                GoRoute(path: doctors, builder: (_, __) => const ItemScreen()),
+                GoRoute(path: doctors, builder: (_, __) => const DoctorsScreen()),
               ],
             ),
             StatefulShellBranch(

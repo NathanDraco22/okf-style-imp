@@ -13,7 +13,7 @@ Cuando una acción de la UI requiere varios pasos (validar → confirmar con di�
 
 ```dart
 Future<void> startTerminalPayment(BuildContext context) async {
-  final viewController = context.read<WriteTerminalInvoiceCubit>().viewController;
+  final viewController = SaleTerminalMediator.of(context).viewController;
   if (viewController.items.isEmpty) return;
 
   if (viewController.hasItemsWithZeroQuantity) {
@@ -64,7 +64,7 @@ Future<void> handleTerminalSaleCompletion(BuildContext context, InvoiceInDb invo
   await showInvoiceViewerDialog(context, invoice);
 
   if (!context.mounted) return;
-  context.read<WriteTerminalInvoiceCubit>().viewController.clear();
+  SaleTerminalMediator.of(context).viewController.clear();
 }
 ```
 
@@ -113,7 +113,9 @@ BlocListener<WriteTerminalInvoiceCubit, WriteTerminalInvoiceState>(
 
 - **Una función top-level por flujo** — `startTerminalPayment`, `handleTerminalSaleCompletion`, etc.
 - **Vive en el módulo** (archivo propio: `payment_action.dart`, `sale_completion.dart`), no en la sección que la usa
+- **El ViewController se lee del Mediator** (`XxxMediator.of(context).viewController`), nunca del cubit — ver [ViewController Pattern](view_controller_pattern.md)
 - **Validaciones y diálogos dentro del flujo** — el widget no conoce la lógica, solo llama la función
+- **Los diálogos se invocan como show functions** (`showXxx(context)`) — ver [Patrón Dialog/Modal](dialog_show_functions.md)
 - **`context.mounted` después de cada `await`** antes de usar el context
 - **Los side effects de escritura se orquestan en la raíz** (BlocListener), los flujos solo disparan la mutación
 - **Guard de salida** — confirmar antes de abandonar pantallas con datos sin guardar
