@@ -45,7 +45,7 @@ async def search(self, query: str) -> list[dict[str, Any]]:
         {"$sort": {"score": -1}},
         {"$match": {"isDeleted": {"$ne": True}}},
     ]
-    cursor = self.__collection.aggregate(pipeline)
+    cursor = await self.__collection.aggregate(pipeline)
     result = await cursor.to_list(length=None)
     await cursor.close()
     return result
@@ -57,3 +57,4 @@ async def search(self, query: str) -> list[dict[str, Any]]:
 - El `$text` index es compuesto: mayor peso en `name` que en `searchPrefixes`
 - Se usa `default_language="spanish"` para stem español
 - El aggregation pipeline añade `textScore` y ordena por relevancia
+- Con `AsyncMongoClient` (pymongo async), `aggregate()` es coroutine: **siempre** `await self.__collection.aggregate(pipeline)` antes de `to_list()`
