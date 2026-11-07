@@ -22,6 +22,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 ## State Management (Cubits)
 
 - [Read / Write Cubits](read_write_cubits.md) — Separación estricta de lectura y escritura
+- [Cross-Cubit Event Sync](cross_cubit_event_sync.md) — Sincronización desacoplada entre Cubits vía Repository Stream
 - [Estados de Lectura](cubit_states_read.md) — Initial → Loading → Success → Refreshing → Error
 - [Estados de Escritura](cubit_states_write.md) — Initial → Writing → Created/Updated/Deleted → Error
 - [Paginación Infinita y Búsqueda](pagination_infinite_scroll.md) — Scroll infinito + Searching que conserva datos
@@ -31,13 +32,14 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 - [DataSource Pattern](data_source_pattern.md) — Singleton + HttpService mixin
 - [HttpService Mixin](http_service_mixin.md) — HTTP methods + status code processing
 - [ReactiveRepository](reactive_repository.md) — StreamController broadcast para reactividad
+- [Cross-Cubit Event Sync](cross_cubit_event_sync.md) — Bus de eventos tipado mediante eventStream
 
 ## Infraestructura
 
 - [Inyección de Dependencias](di_flutter.md) — RepositoryProvider + BlocProvider + GetIt
 - [Mediator Pattern](mediator_pattern.md) — InheritedWidget + ChangeNotifier para forms
 - [Manejo de Excepciones](exception_handling_flutter.md) — Jerarquía sellada de errores HTTP
-- [GoRouter](go_router_pattern.md) — StatefulShellRoute + auth redirect
+- [GoRouter](go_router_pattern.md) — StatefulShellRoute + Stream redirect + Location preservation
 - [Funciones de Flujo](action_flow_functions.md) — Acciones complejas como funciones top-level
 - [Patrón Dialog/Modal](dialog_show_functions.md) — Show functions fuera del router: viewers, editors, searchers, bottom modals
 

@@ -1,5 +1,23 @@
 # Bitácora de cambios
 
+## 2026-11-03 — Redacción Integral de README.md y Patrones OKF (GoRouter + Cross-Cubit Sync)
+
+- **README.md General**:
+  - Redacción completa del documento institucional del repositorio en formato UTF-8 markdown.
+  - Explica la filosofía del estándar OKF v0.2, el agnosticismo de dominio, la prioridad CLI y el control de ciclo de vida de memoria y streams.
+  - Detalla la arquitectura Frontend (Flujo Onion, Read/Write Cubits, ReactiveRepository, Cross-Cubit Event Sync, GoRouter reactivo, Show functions, ViewController) y Backend (Flujo Onion de 5 capas, soft delete, timestamps Unix ms, transacciones MongoDB).
+  - Incluye guía de navegación para desarrolladores y agentes de IA, y catálogo de comandos Onion CLI.
+- **GoRouter Reactivo (`go_router_pattern.md`)**:
+  - Incorporada máquina de estados de sesión multi-fase (`Bootstrapping/Splash` $\to$ `Onboarding` $\to$ `Inactive/Suspended` $\to$ `Login` $\to$ `Dashboard`).
+  - Patrón de preservación pasiva de ruta (`_lastKnownLocation`) para evitar reinicios forzados al Home ante mutaciones de contexto global (cambio de organización/sucursal, refresco de token en segundo plano).
+  - Subrutas operativas a pantalla completa (`parentNavigatorKey: rootNavigatorKey`) que ocultan el menú Shell conservando URLs navegables e historial nativo.
+  - Gestión y desecho estricto de suscripciones en `GoRouterRefreshStream`.
+- **Cross-Cubit Event Sync (`cross_cubit_event_sync.md`)**:
+  - Nuevo patrón de arquitectura para sincronización entre Cubits independientes.
+  - Sustituye los anti-patrones de acoplamiento directo (Cubit-to-Cubit) y coordinación manual frágil en UI por un **Event Broker tipado** mediante `ReactiveRepository.eventStream`.
+  - Control de ciclo de vida con guarda `isClosed` y cancelación obligatoria de `StreamSubscription` en el método `close()` del Cubit.
+  - Documento registrado e indexado en `frontend/flutter_dart/patterns/INDEX.md`.
+
 ## 2026-08-02 — Cierre: CLI v0.6.0 commiteado y OKF al día
 
 - El repo `onion-cli` quedó en **v0.6.0** con todo commiteado (reactive repository, fastapi-init con clon del template, fix circular import en `base_mongo_collection_template.py`).
