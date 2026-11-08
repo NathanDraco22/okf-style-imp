@@ -1,5 +1,15 @@
 # Bitácora de cambios
 
+## 2026-11-08 — Formatter Global con Resolver Inyectado
+
+- **Nuevo patrón (`global_formatter_resolver.md`)**:
+  - Documenta la estrategia de un formatter puro que lee configuración global desde un Cubit mediante un callback registrado una sola vez.
+  - Incluye la clase `NumberFormatter` con `CurrencyResolver`, el enum `AppCurrency` y el registro/limpieza del resolver en `AppSettingsCubit`.
+  - Explica por qué no se necesita un setter al cargar o guardar: el formatter consulta el estado vivo del Cubit en cada formateo.
+  - Cubre ciclo de vida, fallback, testing, isolates, múltiples Cubits y el checklist para reutilizarlo en otros proyectos.
+  - Aplicable a moneda, locale, formatos de fecha, sistema de unidades o cualquier configuración global de formato.
+- **Índices actualizados**: enlace agregado en `frontend/flutter_dart/patterns/INDEX.md`; README actualizado a 24 patrones y árbol de archivos ampliado.
+
 ## 2026-11-03 — Redacción Integral de README.md y Patrones OKF (GoRouter + Cross-Cubit Sync)
 
 - **README.md General**:

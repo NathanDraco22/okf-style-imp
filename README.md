@@ -32,11 +32,12 @@ okf-style-imp/
 │       │   ├── INDEX.md
 │       │   ├── naming_conventions_flutter.md  # Naming camelCase, PascalCase, archivos
 │       │   └── project_structure_flutter.md   # Árbol estándar de carpetas lib/src/
-│       └── patterns/                 # Catálogo de 23 patrones de diseño
+│       └── patterns/                 # Catálogo de 24 patrones de diseño
 │           ├── INDEX.md              # Índice temático de patrones Flutter
 │           ├── flutter_onion_flow.md # Flujo Screen → Cubit → Repo → DataSource → API
 │           ├── read_write_cubits.md  # Separación estricta ReadCubit vs WriteCubit
 │           ├── cross_cubit_event_sync.md # Sincronización desacoplada vía Repository Stream
+│           ├── global_formatter_resolver.md # Formatter puro + callback del Cubit global
 │           ├── reactive_repository.md# Mixin broadcast para reactividad sin cache
 │           ├── go_router_pattern.md  # Router reactivo a streams + lastKnownLocation
 │           ├── dialog_show_functions.md # Show functions tipadas fuera del router
@@ -136,6 +137,12 @@ El stack de frontend implementa una variante cliente de la **Arquitectura Onion*
 ### 5. Diálogos y Modales fuera del Router (`Show Functions`)
 - Los diálogos, modales y visores son funciones top-level (`showItemEditor(context)`, `showItemViewer(context)`) que devuelven `Future<T?>`.
 - Garantizan contratos fuertemente tipados (`null` = cancelado), componibilidad y mantienen limpio el árbol de rutas de GoRouter.
+
+### 6. Formatter Global con Resolver Inyectado
+- Las utilidades de formato viven en paquetes puros y no conocen el Cubit ni `GetIt`.
+- El Cubit global registra un callback una sola vez (`NumberFormatter.configureCurrencyResolver(() => currency)`); el formatter lo ejecuta en cada operación para leer el estado actual.
+- No hay setters repartidos: `emit(AppSettingsLoaded(...))` cambia la respuesta del Cubit y el siguiente formateo usa el nuevo valor.
+- El resolver se limpia en `close()` para evitar referencias al Cubit destruido; se aplica a moneda, locale, fechas o unidades. Ver [global_formatter_resolver.md](frontend/flutter_dart/patterns/global_formatter_resolver.md).
 
 ---
 

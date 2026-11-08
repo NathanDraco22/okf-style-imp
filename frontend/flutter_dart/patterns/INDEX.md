@@ -23,6 +23,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 
 - [Read / Write Cubits](read_write_cubits.md) — Separación estricta de lectura y escritura
 - [Cross-Cubit Event Sync](cross_cubit_event_sync.md) — Sincronización desacoplada entre Cubits vía Repository Stream
+- [Formatter Global con Resolver Inyectado](global_formatter_resolver.md) — Cubit global registra un callback; el formatter puro lee la configuración actual sin setters manuales
 - [Estados de Lectura](cubit_states_read.md) — Initial → Loading → Success → Refreshing → Error
 - [Estados de Escritura](cubit_states_write.md) — Initial → Writing → Created/Updated/Deleted → Error
 - [Paginación Infinita y Búsqueda](pagination_infinite_scroll.md) — Scroll infinito + Searching que conserva datos
