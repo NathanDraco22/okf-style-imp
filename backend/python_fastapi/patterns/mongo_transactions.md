@@ -9,6 +9,8 @@ tags: [mongodb, transacciones, atomicidad, patron]
 
 Para operaciones que modifican múltiples colecciones de forma atómica (facturas, pagos, entradas/salidas de inventario).
 
+> **Procesos multi-paso:** cuando la transacción contiene validaciones, lecturas, varios documentos y movimientos de inventario, usar [Pipeline-Steps](pipeline_steps.md) para separar el proceso en pasos independientes y mantener la transacción en el orquestador.
+
 ## Estructura
 
 ```python

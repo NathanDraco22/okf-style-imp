@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "frontend/flutter_dart/patterns/reactive_repository.md",
+                "file": "frontend/flutter_dart/patterns/INDEX.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "reactive_repository"
+              "title": "INDEX"
             }
           }
         ]
@@ -187,8 +187,12 @@
   },
   "active": "4e015b751dbf95e6",
   "lastOpenFiles": [
-    "frontend/flutter_dart/patterns/read_write_cubits.md",
+    "frontend/INDEX.md",
+    "frontend/flutter_dart/patterns/action_flow_functions.md",
     "frontend/flutter_dart/patterns/INDEX.md",
+    "frontend/flutter_dart/INDEX.md",
+    "frontend/flutter_dart/patterns/reactive_repository.md",
+    "frontend/flutter_dart/patterns/read_write_cubits.md",
     "frontend/flutter_dart/patterns/flutter_onion_flow.md",
     "frontend/flutter_dart/patterns/exception_handling_flutter.md",
     "log.md",
@@ -197,11 +201,8 @@
     "frontend/flutter_dart/style/INDEX.md",
     "frontend/flutter_dart/patterns/di_flutter.md",
     "frontend/flutter_dart/patterns/cubit_states_read.md",
-    "frontend/flutter_dart/patterns/reactive_repository.md",
     "frontend/flutter_dart/style/project_structure_flutter.md",
-    "frontend/flutter_dart/INDEX.md",
     "frontend/flutter_dart/patterns/screen_structure.md",
-    "frontend/INDEX.md",
     "frontend/flutter_dart/style/naming_conventions_flutter.md",
     "frontend/flutter_dart/patterns/search_cubit.md",
     "backend/python_fastapi/patterns/INDEX.md",
@@ -212,7 +213,6 @@
     "backend/INDEX.md",
     "INDEX.md",
     "frontend/flutter_dart/patterns/cli_commands_flutter.md",
-    "backend/python_fastapi/patterns/index.md",
     "backend/python_fastapi/style",
     "backend/python_fastapi/patterns",
     "backend/python_fastapi",

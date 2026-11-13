@@ -11,6 +11,10 @@ Patrones de diseño y técnicas usados en proyectos FastAPI con arquitectura Oni
 - [Flujo Onion](onion_flow.md) — Router → Controller → Repository → DataSource → Collection → MongoDB
 - [Versionado](versioning.md) — Organización v1/v2 en api, repos y collections
 
+## Orquestación de procesos
+
+- [Pipeline-Steps](pipeline_steps.md) — Contexto compartido, pasos independientes, transacción y resultado final (lógica de orquestación; el CLI no genera los steps)
+
 ## Capas
 
 - [Patrón Router](router_pattern.md) — 5 endpoints CRUD por entidad

@@ -1,5 +1,16 @@
 # Bitácora de cambios
 
+## 2026-11-10 — Pipeline-Steps para Procesos Complejos
+
+- **Nuevo patrón (`pipeline_steps.md`)**: documenta la orquestación de procesos multi-paso con un contexto compartido, pasos independientes y un resultado final tipado.
+- **Contratos base:** `PipelineStep` (`name`, `should_execute`, `async execute`), `Pipeline` (`run` secuencial) y `PipelineResult` (`context`, `executed_steps`, `skipped_steps`).
+- **Separación de responsabilidades:** el orquestador conserva la transacción, el mutex y el retry; los steps no abren transacciones, no hacen commit/abort y reciben sus dependencias por constructor.
+- **Contexto:** solo datos (entradas, estado intermedio y resultado); las colecciones/repositorios no se guardan en el contexto.
+- **Ramas opcionales:** `should_execute` permite omitir pasos sin llenar el pipeline de condicionales.
+- **Ejemplo genérico:** `OrderApproval` con validación, carga de cliente, registro de pago, persistencia de factura, aprobación y construcción del resultado.
+- **Implementación de referencia:** `kardex-server/.../core/adjustment_requests/` y `test/test_adjustment_request_pipeline.py`; el documento mantiene el ejemplo agnóstico al dominio.
+- **Índices actualizados:** `backend/python_fastapi/patterns/INDEX.md`, árbol y conteo del `README.md` (17 → 18 patrones), y cross-link desde `mongo_transactions.md`.
+
 ## 2026-11-08 — Formatter Global con Resolver Inyectado
 
 - **Nuevo patrón (`global_formatter_resolver.md`)**:

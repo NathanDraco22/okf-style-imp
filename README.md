@@ -67,9 +67,10 @@ okf-style-imp/
         │   ├── INDEX.md
         │   ├── naming_conventions.md # snake_case, PascalCase, convenciones REST
         │   └── project_structure.md  # Árbol de carpetas app/ (routers, controllers, etc.)
-        └── patterns/                 # Catálogo de 17 patrones de diseño
+        └── patterns/                 # Catálogo de 18 patrones de diseño
             ├── INDEX.md              # Índice temático de patrones FastAPI
             ├── onion_flow.md         # Flujo Router → Controller → Repo → DataSource → Collection → DB
+            ├── pipeline_steps.md     # Procesos multi-paso con contexto, steps y transacción
             ├── router_pattern.md     # 5 endpoints CRUD estándar por entidad
             ├── controller_pattern.md # Inyección de repo, 404 handler y DTOs
             ├── repository_crud.md    # Reglas de negocio y orquestación
@@ -161,6 +162,10 @@ Request ──> Router ──> Controller ──> Repository ──> DataSource 
 | **Repository** | Lógica y reglas de negocio, validaciones complejas, cálculo de estados | Objetos de dominio $\leftrightarrow$ DTOs |
 | **DataSource** | Conversión entre modelos de negocio tipados y diccionarios primitivos | Dicts / Primitivos $\leftrightarrow$ Pydantic Models |
 | **Collection** | Driver asíncrono (`AsyncMongoClient`), queries MongoDB, soft delete y timestamps | Dicts BSON $\leftrightarrow$ Base de Datos |
+
+### Procesos Complejos
+
+Cuando un caso de uso combina validación, lecturas, varios documentos y movimientos transaccionales, se orquesta con **Pipeline-Steps**: un contexto compartido, pasos independientes y un resultado final tipado. El orquestador conserva la transacción; el mutex y el retry quedan en el Manager que lo invoca; los steps no hacen commit ni abort. Ver [Pipeline-Steps](backend/python_fastapi/patterns/pipeline_steps.md).
 
 ### Convenciones Críticas de Persistencia
 - **Soft Delete Universal:** Todas las entidades implementan el campo booleano `isDeleted: bool = False`. El borrado lógico se realiza con `update_one({"$set": {"isDeleted": True}})`. Las lecturas excluyen automáticamente registros eliminados (`{"isDeleted": False}`).
