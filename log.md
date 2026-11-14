@@ -1,5 +1,12 @@
 # Bitácora de cambios
 
+## 2026-11-13 — Fechas previas a 1970 (epoch negativo)
+
+- **Bug reportado:** al crear un paciente de 57 años (nacido en 1969), la API rechazó el registro porque `birthDate` llegaba como `-20_131_200_000`.
+- **Causa raíz:** epoch ms es un entero con signo; la fecha se validó con una regla de auditoría (`gt=0`) que asume que todo timestamp es positivo. El resultado fue un `422 Input should be greater than 0`.
+- **Fix documentado:** `timestamps.md` ahora distingue timestamps de auditoría de fechas de dominio y valida estas últimas por rango plausible (`[-2_208_988_800_000, now]`), sin `abs()` ni casts unsigned.
+- **Docs actualizados:** `backend/python_fastapi/patterns/timestamps.md` (sección nueva + checklist), `frontend/flutter_dart/patterns/query_params.md` (filtros negativos), `frontend/flutter_dart/patterns/flutter_models.md` (date pickers y `fromMillisecondsSinceEpoch`).
+
 ## 2026-11-10 — Pipeline-Steps para Procesos Complejos
 
 - **Nuevo patrón (`pipeline_steps.md`)**: documenta la orquestación de procesos multi-paso con un contexto compartido, pasos independientes y un resultado final tipado.

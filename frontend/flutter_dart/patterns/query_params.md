@@ -73,9 +73,18 @@ Future<List<CashTransactionInDb>> getCashTransactions({
 }
 ```
 
+## Fechas previas a 1970
+
+`DateTime.millisecondsSinceEpoch` devuelve un `int` con signo: una fecha de 1969 produce un valor negativo (1969-05-13 → `-20_131_200_000`). Es válido y debe enviarse tal cual.
+
+- No descartar el filtro con `startDate != null && startDate > 0`.
+- `toMap()` solo debe excluir `null`, nunca valores negativos.
+- `DateTime.fromMillisecondsSinceEpoch(-20_131_200_000)` reconstruye correctamente 1969-05-13.
+
 ## Reglas
 
 - Cada conjunto de filtros es una clase separada en `domain/query_params/`
 - Los campos opcionales son `null` cuando no se aplican
 - `toMap()` solo incluye campos no nulos
+- Las fechas de dominio (`startDate` / `endDate`) admiten valores negativos; no se filtran por signo
 - Se usa en combinación con `HttpTools.generateUri(path, queryParameters:)`

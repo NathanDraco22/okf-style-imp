@@ -89,3 +89,18 @@ class Item extends BaseItem {
 | `Create{Entity}` | Creación (POST) | `toJson()` mapea todos los campos |
 | `Update{Entity}` | Actualización (PATCH) | `toJson()` omite nulls para merge parcial |
 | `{Entity}InDb` | Respuesta de API | `fromJson()` factory + `toJson()` completo |
+
+## Fechas de dominio y epoch negativo
+
+`createdAt` / `updatedAt` son marcas de auditoría (siempre positivas), pero una fecha de dominio como `birthDate` puede ser anterior a 1970 y, por tanto, negativa:
+
+```dart
+// 1969-05-13T00:00:00Z
+const birthDate = -20131200000;
+DateTime.fromMillisecondsSinceEpoch(birthDate, isUtc: true); // válido
+```
+
+- `DateTime.fromMillisecondsSinceEpoch` acepta valores negativos; su rango es de ±100 000 000 días respecto al epoch (≈ ±275 000 años).
+- En el selector de fecha usar `firstDate: DateTime(1900)` (o anterior) y `lastDate: DateTime.now()`.
+- En `fromJson`, no validar `json['birthDate'] > 0`; solo comprobar que no sea `null`.
+- No usar `abs()` ni `toUnsigned()` al serializar una fecha de dominio.
