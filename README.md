@@ -32,7 +32,7 @@ okf-style-imp/
 │       │   ├── INDEX.md
 │       │   ├── naming_conventions_flutter.md  # Naming camelCase, PascalCase, archivos
 │       │   └── project_structure_flutter.md   # Árbol estándar de carpetas lib/src/
-│       └── patterns/                 # Catálogo de 24 patrones de diseño
+│       └── patterns/                 # Catálogo de 25 patrones de diseño
 │           ├── INDEX.md              # Índice temático de patrones Flutter
 │           ├── flutter_onion_flow.md # Flujo Screen → Cubit → Repo → DataSource → API
 │           ├── read_write_cubits.md  # Separación estricta ReadCubit vs WriteCubit
@@ -40,6 +40,7 @@ okf-style-imp/
 │           ├── global_formatter_resolver.md # Formatter puro + callback del Cubit global
 │           ├── reactive_repository.md# Mixin broadcast para reactividad sin cache
 │           ├── go_router_pattern.md  # Router reactivo a streams + lastKnownLocation
+│           ├── gate_filter_pattern.md # Gate único con filtros componibles y streams deduplicados
 │           ├── dialog_show_functions.md # Show functions tipadas fuera del router
 │           ├── view_controller_pattern.md # Estado efímero de vistas desacoplado
 │           ├── view_segmentation.md  # Orquestador, unidades y fuente de verdad
@@ -144,6 +145,11 @@ El stack de frontend implementa una variante cliente de la **Arquitectura Onion*
 - El Cubit global registra un callback una sola vez (`NumberFormatter.configureCurrencyResolver(() => currency)`); el formatter lo ejecuta en cada operación para leer el estado actual.
 - No hay setters repartidos: `emit(AppSettingsLoaded(...))` cambia la respuesta del Cubit y el siguiente formateo usa el nuevo valor.
 - El resolver se limpia en `close()` para evitar referencias al Cubit destruido; se aplica a moneda, locale, fechas o unidades. Ver [global_formatter_resolver.md](frontend/flutter_dart/patterns/global_formatter_resolver.md).
+
+### 7. Control de Visibilidad y Acceso Componible (`Gate` + `GateFilter`)
+- Un único widget `Gate` recibe `List<GateFilter>` (patrón análogo a `inputFormatters` en `TextField`), evitando anidar múltiples widgets Gate en el árbol.
+- Cada `GateFilter` implementa `isAllowed(context)`, `watchStreams(context)` y `buildFallback(context)`, permitiendo reutilizar las mismas reglas tanto en UI reactiva (con suscripción deduplicada a Cubits) como en resolvers síncronos de rutas/atajos.
+- Incluye combinadores (`AnyGateFilter`, `NotGateFilter`, `PredicateGateFilter`) y compatibilidad directa con `Expanded`/`Flexible`. Ver [gate_filter_pattern.md](frontend/flutter_dart/patterns/gate_filter_pattern.md).
 
 ---
 

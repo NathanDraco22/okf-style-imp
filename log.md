@@ -1,5 +1,15 @@
 # Bitácora de cambios
 
+## 2026-11-22 — Gate Único con `GateFilter` Componibles
+
+- **Nuevo patrón (`gate_filter_pattern.md`):**
+  - Documenta la estrategia de consolidar controles de visibilidad y permisos en un único widget `Gate` (`StatefulWidget`) que recibe `List<GateFilter>` (análogo a `inputFormatters` en `TextField`), evitando árboles anidados y banderas booleanas dispersas.
+  - **Contrato `GateFilter`:** `isAllowed(context)`, `watchStreams(context)` (con deduplicación de streams en `Gate`) y `buildFallback(context)` para fallbacks diferenciados por motivo de bloqueo.
+  - **Combinadores y modos:** `GateMatchMode.all` / `any`, `AnyGateFilter`, `NotGateFilter` y `PredicateGateFilter`.
+  - **Unificación UI + lógica síncrona:** reemplaza flags booleanos en descriptores de menú (`NavSubmoduleItem.gates`) para alimentar tanto a `Gate` como a resolvers síncronos de rutas/atajos.
+  - Incluye compatibilidad con `Expanded`/`Flexible`, reglas de implementación, testing con `pumpAndSettle` y checklist de adopción.
+- **Índices actualizados:** enlace agregado en `frontend/flutter_dart/patterns/INDEX.md`; `README.md` actualizado a 25 patrones con sección resumen y árbol ampliado.
+
 ## 2026-11-13 — Fechas previas a 1970 (epoch negativo)
 
 - **Bug reportado:** al crear un paciente de 57 años (nacido en 1969), la API rechazó el registro porque `birthDate` llegaba como `-20_131_200_000`.

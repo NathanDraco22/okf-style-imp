@@ -41,6 +41,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 - [Mediator Pattern](mediator_pattern.md) — InheritedWidget + ChangeNotifier para forms
 - [Manejo de Excepciones](exception_handling_flutter.md) — Jerarquía sellada de errores HTTP
 - [GoRouter](go_router_pattern.md) — StatefulShellRoute + Stream redirect + Location preservation
+- [Gate Único y GateFilter Componibles](gate_filter_pattern.md) — Control de acceso y visibilidad reactivo en un único widget con filtros componibles
 - [Funciones de Flujo](action_flow_functions.md) — Acciones complejas como funciones top-level
 - [Patrón Dialog/Modal](dialog_show_functions.md) — Show functions fuera del router: viewers, editors, searchers, bottom modals
 
