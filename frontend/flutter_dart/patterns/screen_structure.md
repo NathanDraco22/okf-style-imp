@@ -9,6 +9,10 @@ tags: [flutter, screen, estructura, patron, ui]
 
 Cada pantalla sigue la misma estructura de 3 partes.
 
+> Esta estructura aplica a cubits de **pantalla** y **compartidos**. Los cubits
+> **globales** no se crean aquí: viven en GetIt y se consumen con
+> `bloc: getIt<T>()`. Ver [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).
+
 ## 1. Screen pública (entry point)
 
 Crea los cubits con sus dependencias y los provee al árbol.
@@ -97,14 +101,39 @@ class _Body extends StatelessWidget {
 }
 ```
 
+## 4. Providers y responsive
+
+La screen pública provee los cubits y **después** el body elige la variante:
+
+```text
+ItemsScreen (MultiBlocProvider)
+  └── _RootScaffold
+        └── _Body  ← context.isMobile() / isTablet() / isDesktop()
+              ├── _ItemsMobileBody
+              ├── _ItemsTabletBody
+              └── _ItemsDesktopBody
+```
+
+Reglas:
+
+- El `MultiBlocProvider` va **arriba** de `_Body`, nunca dentro de una
+  variante. Si se coloca abajo, redimensionar la ventana recrea los cubits y
+  se pierde el estado.
+- Las variantes no crean cubits ni controllers; reciben datos y callbacks.
+- Los cubits globales de GetIt no se proveen aquí.
+
+Ver [Diseño Responsive](responsive_design.md).
+
 ## Reglas
 
 | Capa | Rol | Widget base |
 |------|-----|-------------|
-| **Screen pública** | Crea cubits con DI, provee al árbol | `MultiBlocProvider` |
+| **Screen pública** | Crea cubits locales con DI, provee al árbol | `MultiBlocProvider` |
 | **Root Scaffold** | Side effects (loading, SnackBars, navegación) | `BlocListener` + `Scaffold` |
 | **Body** | UI reactiva que cambia con el estado | `BlocBuilder` / `BlocSelector` |
 
 - La Screen pública es `const StatelessWidget`
 - El Scaffold es privado (prefijo `_`)
 - El Body es privado y puede ser `StatefulWidget` si necesita controladores
+- Los cubits globales se consumen con `bloc: getIt<T>()`; no se proveen en la
+  pantalla. Ver [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).

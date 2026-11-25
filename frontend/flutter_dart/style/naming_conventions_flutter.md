@@ -37,7 +37,7 @@ tags: [flutter, dart, estilo, naming, convenciones]
 | Buscar / seleccionar | `show{Entity}Search(context, {...})` | `showProductSearch(context, restrictStock: true)` |
 | Bottom modal | `show{Action}BottomModal(context, {...})` | `showConfirmSendBottomModal(context, title: 'Enviar')` |
 
-Todas devuelven `Future<T?>` (ver [Patrón Dialog/Modal](dialog_show_functions.md)).
+Todas devuelven `Future<T?>` (ver [Patrón Dialog/Modal](../patterns/dialog_show_functions.md)).
 
 ## Clases
 
@@ -74,13 +74,14 @@ class ClientSelectorCard extends StatelessWidget { ... }
 
 | Carpeta | Contenido |
 |---------|-----------|
-| `lib/cubits/{entity}/` | Cubits **globales** de la app (auth, sesión, modo) |
-| `lib/src/cubits/{entity}/` | Cubits **compartidos** entre módulos (entidades multi-feature) |
-| `modules/{feature}/{feature}_screen.dart` | Entry point del módulo (crea el ViewController, MultiBlocProvider) |
-| `modules/{feature}/{feature}_mediator.dart` | InheritedWidget mudo compartido web/mobile |
+| `lib/cubits/{entity}/` | Cubits **globales** de la app (GetIt) |
+| `lib/src/cubits/{entity}/` | Cubits **compartidos** entre módulos (provider) |
+| `modules/{feature}/view/{feature}_screen.dart` | Entry point del módulo (crea el ViewController, MultiBlocProvider) |
+| `modules/{feature}/{feature}_mediator.dart` | InheritedWidget mudo compartido entre variantes |
 | `modules/{feature}/view_controller.dart` | ChangeNotifier (estado local de la pantalla) |
 | `modules/{feature}/cubit/` | Cubits del módulo — **solo cuando lo amerita** |
-| `modules/{feature}/mobile/` | Versión mobile |
-| `modules/{feature}/web/` | Versión web |
-| `modules/{feature}/web/sections/` | Secciones part de web |
+| `modules/{feature}/mobile/` | Variante mobile (< 600 px) |
+| `modules/{feature}/tablet/` | Variante tablet (600–839 px) |
+| `modules/{feature}/desktop/` | Variante desktop (>= 840 px) |
+| `modules/{feature}/desktop/sections/` | Secciones part de desktop |
 | `modules/{feature}/widgets/` | Widgets compartidos del módulo |

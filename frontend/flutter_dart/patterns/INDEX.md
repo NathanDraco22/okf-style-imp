@@ -21,6 +21,7 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 
 ## State Management (Cubits)
 
+- [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md) — Globales en GetIt, pantalla/diálogo con providers
 - [Read / Write Cubits](read_write_cubits.md) — Separación estricta de lectura y escritura
 - [Cross-Cubit Event Sync](cross_cubit_event_sync.md) — Sincronización desacoplada entre Cubits vía Repository Stream
 - [Formatter Global con Resolver Inyectado](global_formatter_resolver.md) — Cubit global registra un callback; el formatter puro lee la configuración actual sin setters manuales
@@ -51,4 +52,4 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 
 ## Responsive
 
-- [Diseño Responsive](responsive_design.md) — mobile/ vs web/ con part files
+- [Diseño Responsive](responsive_design.md) — mobile/tablet/desktop con cortes 600/840, part files y recetas de layout

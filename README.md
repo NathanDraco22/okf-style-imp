@@ -32,7 +32,7 @@ okf-style-imp/
 │       │   ├── INDEX.md
 │       │   ├── naming_conventions_flutter.md  # Naming camelCase, PascalCase, archivos
 │       │   └── project_structure_flutter.md   # Árbol estándar de carpetas lib/src/
-│       └── patterns/                 # Catálogo de 25 patrones de diseño
+│       └── patterns/                 # Catálogo de 26 patrones de diseño
 │           ├── INDEX.md              # Índice temático de patrones Flutter
 │           ├── flutter_onion_flow.md # Flujo Screen → Cubit → Repo → DataSource → API
 │           ├── read_write_cubits.md  # Separación estricta ReadCubit vs WriteCubit
@@ -45,19 +45,20 @@ okf-style-imp/
 │           ├── view_controller_pattern.md # Estado efímero de vistas desacoplado
 │           ├── view_segmentation.md  # Orquestador, unidades y fuente de verdad
 │           ├── screen_structure.md   # MultiBlocProvider → Listener → Builder
+│           ├── cubit_scopes.md       # GetIt para globales; providers para pantalla/diálogo
 │           ├── cubit_states_read.md  # Estados sellados de lectura (Initial..Success..Error)
 │           ├── cubit_states_write.md # Estados sellados de mutación (Initial..Writing..Created)
 │           ├── pagination_infinite_scroll.md # Scroll infinito con búsqueda en caliente
 │           ├── data_source_pattern.md# Singletons y HttpService mixin
 │           ├── http_service_mixin.md # Cliente HTTP unificado con tipado de errores
-│           ├── di_flutter.md         # Inyección de dependencias (RepositoryProvider / BlocProvider)
+│           ├── di_flutter.md         # Inyección de dependencias (RepositoryProvider / BlocProvider / GetIt)
 │           ├── mediator_pattern.md   # Formularios complejos con InheritedWidget
 │           ├── exception_handling_flutter.md # Excepciones selladas de red y negocio
 │           ├── action_flow_functions.md # Acciones compuestas como top-level functions
 │           ├── flutter_models.md     # Base / Create / Update / InDb con JSON
 │           ├── list_response_flutter.md # DTO de listas con conteo
 │           ├── query_params.md       # Filtros tipados toMap()
-│           ├── responsive_design.md  # Adaptabilidad Desktop / Web / Mobile
+│           ├── responsive_design.md  # mobile/tablet/desktop con cortes 600/840
 │           └── cli_commands_flutter.md # Referencia de comandos `onion` para Flutter
 │
 └── backend/                          # Conocimientos del Stack Backend
@@ -151,6 +152,12 @@ El stack de frontend implementa una variante cliente de la **Arquitectura Onion*
 - Un único widget `Gate` recibe `List<GateFilter>` (patrón análogo a `inputFormatters` en `TextField`), evitando anidar múltiples widgets Gate en el árbol.
 - Cada `GateFilter` implementa `isAllowed(context)`, `watchStreams(context)` y `buildFallback(context)`, permitiendo reutilizar las mismas reglas tanto en UI reactiva (con suscripción deduplicada a Cubits) como en resolvers síncronos de rutas/atajos.
 - Incluye combinadores (`AnyGateFilter`, `NotGateFilter`, `PredicateGateFilter`) y compatibilidad directa con `Expanded`/`Flexible`. Ver [gate_filter_pattern.md](frontend/flutter_dart/patterns/gate_filter_pattern.md).
+
+### 8. Alcance de Cubits y Composition Root
+- **Global:** los cubits de `lib/cubits/` viven en GetIt; se crean una sola vez en `AppDependencies.create()` desde `main()` y se consumen con `bloc: getIt<T>()` o `getIt<T>()`.
+- **Pantalla/diálogo:** providers locales (`MultiBlocProvider` en el entry, `BlocProvider.value` en diálogos). Sin doble registro: un global no se provee en el árbol y un cubit de pantalla no se busca con GetIt.
+- **Responsive:** los providers van arriba del dispatch mobile/tablet/desktop; cambiar el ancho no recrea el estado.
+- Ver [cubit_scopes.md](frontend/flutter_dart/patterns/cubit_scopes.md) y [responsive_design.md](frontend/flutter_dart/patterns/responsive_design.md).
 
 ---
 

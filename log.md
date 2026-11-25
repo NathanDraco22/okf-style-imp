@@ -1,5 +1,22 @@
 # Bitácora de cambios
 
+## 2026-11-25 — Patrones de Frontend: Responsive y Alcance de Cubits
+
+- **Reescrito `responsive_design.md`:**
+  - Tres variantes `mobile/`, `tablet/` y `desktop/` con cortes `600`/`840` en el paquete de negocio.
+  - Extensiones `isMobile/isTablet/isDesktop` con `MediaQuery.sizeOf`.
+  - Entry point con `part` files, dispatch en `_Body` y providers arriba del dispatch.
+  - Recetas: sidebar 280 + `maxWidth` 1100, grid con `maxCrossAxisExtent`, cards mobile, tablas a cards y hover.
+  - Checklist de 375/600/839/840/1280 y regla de no recargar al redimensionar.
+- **Nuevo `cubit_scopes.md`:**
+  - Globales en `lib/cubits/` → GetIt desde `AppDependencies.create()`; sin `GlobalCubitProvider`, sin doble registro.
+  - Compartidos en `lib/src/cubits/` y de pantalla en `modules/{feature}/cubit/` con providers.
+  - Diálogos con `BlocProvider.value` o creación en `showXxx`.
+  - Consumo global con `bloc: getIt<T>()`; `getIt.reset()` en tests.
+  - Anti-patrones y guía de migración desde el wrapper.
+- **Actualizados:** `di_flutter.md` (tabla de alcances y composition root), `project_structure_flutter.md` (`app_dependencies`, tablet/desktop, constantes), `screen_structure.md` (providers y responsive), `cli_commands_flutter.md` (split manual y limitaciones), `naming_conventions_flutter.md`, índices y README (25 → 26 patrones).
+- **Implementación de referencia:** `kardex_app_front/lib/src/modules/home/view` para el responsive; `lib/cubits/` y `provider_container.dart` para los alcances. La convención nueva elimina `GlobalCubitProvider` y unifica los globales en GetIt.
+
 ## 2026-11-25 — Patrón Counter Manager (correlativos atómicos)
 
 - **Nuevo patrón (`counter_manager.md`):**
