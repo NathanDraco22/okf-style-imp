@@ -1,32 +1,28 @@
 ---
 type: Pattern
 title: Alcance y Ciclo de Vida de Cubits
-description: Regla de ubicación y creación de cubits: los globales viven en GetIt desde un composition root, los compartidos y de pantalla usan providers, y los diálogos reciben su cubit con BlocProvider.value o lo crean en el show function.
-tags: [flutter, cubit, get_it, provider, di, ciclo-de-vida, composition-root, patron]
+description: Regla de ubicación y creación de cubits: globales en lib/cubits con GetIt, no globales en lib/src/cubits/{feature} con providers, diálogos con BlocProvider.value y sincronización por ReactiveRepository; el ViewController queda para estado efímero.
+tags: [flutter, cubit, get_it, provider, di, ciclo-de-vida, composition-root, viewcontroller, patron]
 ---
 
 # Alcance y Ciclo de Vida de Cubits
 
-El alcance define el mecanismo, no al revés:
+La ubicación no es opcional:
 
-- **Global** → GetIt, creado una sola vez en el composition root.
-- **Compartido entre módulos** → provider en el punto común más alto.
-- **Pantalla** → `MultiBlocProvider` en el entry point.
-- **Diálogo** → `BlocProvider.value` o creación dentro del `showXxx`.
+| Alcance | Ubicación | Mecanismo | Consumo |
+|---|---|---|---|
+| **Global** | `lib/cubits/{feature}/` | GetIt desde `AppDependencies.create()` | `bloc: getIt<T>()`, `getIt<T>()` |
+| **No global** | `lib/src/cubits/{feature}/` | `MultiBlocProvider` en la screen o ancestro común | `context.watch/read` |
+| **Diálogo** | `lib/src/cubits/{feature}/` | `BlocProvider.value` o creación en `showXxx` | `context.watch/read` |
 
-GetIt existe **solo** para estado global usado en muchos lugares o accesible
-sin `BuildContext`. Nunca para estado de pantalla o de diálogo.
+- `lib/cubits/` es **solo** para estado global.
+- `lib/src/cubits/` es para **todo** cubit que no sea global, separado por
+  feature en plural (`products/`, `orders/`, `categories/`).
+- No existe `modules/{feature}/cubit/`.
+- El **ViewController** no es un cubit: vive en el módulo y maneja estado
+  efímero de la pantalla.
 
-## Tabla de alcances
-
-| Alcance | Ubicación | Creación | Consumo | Vida |
-|---|---|---|---|---|
-| Global | `lib/cubits/{entity}/` | `AppDependencies.create()` en `main()` + `getIt.registerSingleton` | `BlocBuilder(bloc: getIt<T>())`, `BlocListener(bloc: getIt<T>())`, `getIt<T>()` | Toda la app |
-| Compartido | `lib/src/cubits/{entity}/` | Provider en el shell o módulo común | `context.watch/read` | La ruta/módulo que lo provee |
-| Pantalla | `modules/{feature}/cubit/` | `MultiBlocProvider` en el entry | `context.watch/read` | La pantalla |
-| Diálogo | `modules/{feature}/dialogs/` o `widgets/dialogs/` | `BlocProvider.value` o creación en `showXxx` | `context.watch/read` | El diálogo |
-
-## 1. Global: GetIt
+## 1. Global: `lib/cubits/`
 
 ### Cuándo
 
@@ -36,7 +32,7 @@ sin `BuildContext`. Nunca para estado de pantalla o de diálogo.
   comparten un ancestro en el árbol.
 - Se usa en muchos lugares y una sola instancia es la fuente de verdad.
 
-Si el cubit solo lo usa una pantalla, **no** va a GetIt.
+Si el cubit solo lo usa una pantalla, **no** va a `lib/cubits/`.
 
 ### Composition root
 
@@ -195,47 +191,61 @@ tearDown(() async {
 });
 ```
 
-`getIt.reset()` desregistra las instancias; si el test necesita cerrar streams,
-hacerlo antes del reset.
-
 ### Servicios vs cubits
 
 | Registro | Dónde | Qué contiene |
 |---|---|---|
 | Servicios | `config/get_it_config.dart` → `initServices()` | Printer, storage, analytics, clients |
-| Cubits globales | `app_dependencies.dart` → `AppDependencies.create()` | Sesión, settings, tema, carrito, etc. |
+| Cubits globales | `app_dependencies.dart` → `AppDependencies.create()` | Sesión, settings, tema, carrito global, etc. |
 
 `initServices()` no registra cubits y `AppDependencies` no registra servicios.
 
-## 2. Compartido entre módulos
+## 2. No globales: `lib/src/cubits/{feature}/`
 
-Cuando dos o más módulos necesitan el mismo estado pero **no** es global de
-toda la app, el cubit va en `lib/src/cubits/{entity}/` y se provee en el
-ancestro común:
+Todo cubit que no sea global vive aquí, con una carpeta por feature en plural:
 
-```dart
-MultiBlocProvider(
-  providers: [
-    BlocProvider(
-      create: (ctx) => ReadOrderCubit(
-        RepositoryProvider.of<OrdersRepository>(ctx),
-      )..getAll(),
-    ),
-  ],
-  child: const OrdersShell(),
-)
+```text
+lib/src/cubits/
+├── products/
+│   ├── read_products_cubit.dart
+│   ├── read_products_state.dart
+│   ├── write_products_cubit.dart
+│   └── write_products_state.dart
+├── orders/
+│   ├── read_orders_cubit.dart
+│   ├── read_orders_state.dart
+│   ├── write_orders_cubit.dart
+│   └── write_orders_state.dart
+└── categories/
+    └── ...
 ```
 
-- No va a GetIt.
-- Si el ancestro común es toda la app, se vuelve global y se reconsidera el
-  alcance; no se resuelve duplicando la instancia.
-- `context.watch/read` es el acceso correcto.
+Reglas:
 
-## 3. Pantalla
+- **Read y Write separados.** Nunca un cubit que haga lectura y escritura.
+- `Read{Entity}Cubit` carga (`getAll`, `getById`, `refresh`) y escucha el
+  `eventStream` del repositorio.
+- `Write{Entity}Cubit` muta (`create`, `update`, `delete`) y resetea a
+  `Initial` tras cada éxito.
+- La carpeta usa el **plural** del feature, igual que los módulos del backend
+  (`app/api/v1/products`, `app/api/v1/orders`).
+- El nombre del feature debe ser estable: si el backend lo llama `products`,
+  la carpeta es `products/`.
 
-El entry point crea los cubits y los provee **arriba** del dispatch responsive:
+El alcance del provider decide la vida, no la carpeta:
+
+- **Pantalla:** `MultiBlocProvider` en el entry; muere con la ruta.
+- **Compartido:** provider en el ancestro común; muere con ese subárbol.
+- Si dos módulos no comparten ancestro y ambos necesitan el estado, el cubit
+  es global y se mueve a `lib/cubits/`.
+
+## 3. Pantalla: `view/{feature}_screen.dart`
+
+Cada vista tiene un archivo `screen` que es el **único** que instancia los
+cubits no globales:
 
 ```dart
+// modules/items/view/items_screen.dart
 class ItemsScreen extends StatelessWidget {
   const ItemsScreen({super.key});
 
@@ -244,13 +254,13 @@ class ItemsScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (ctx) => ReadItemCubit(
-            RepositoryProvider.of<ItemsRepository>(ctx),
+          create: (ctx) => ReadProductsCubit(
+            RepositoryProvider.of<ProductsRepository>(ctx),
           )..getAll(),
         ),
         BlocProvider(
-          create: (ctx) => WriteItemCubit(
-            RepositoryProvider.of<ItemsRepository>(ctx),
+          create: (ctx) => WriteProductsCubit(
+            RepositoryProvider.of<ProductsRepository>(ctx),
           ),
         ),
       ],
@@ -260,13 +270,49 @@ class ItemsScreen extends StatelessWidget {
 }
 ```
 
-- Se crean una vez por entrada a la ruta.
-- `ReadCubit` dispara su carga en `create` con `..getAll()`.
-- `WriteCubit` no carga solo; espera la acción del usuario.
-- Los providers van arriba del `_Body` que elige mobile/tablet/desktop. Ver
+- El archivo se llama `{feature}_screen.dart` y vive en
+  `modules/{feature}/view/`.
+- La screen es el único lugar con `MultiBlocProvider` para esos cubits.
+- Las variantes `mobile/`, `tablet/` y `desktop/` y los widgets hijos **no**
+  crean cubits; reciben el estado por `context`.
+- Los providers van arriba del dispatch responsive. Ver
   [Diseño Responsive](responsive_design.md).
+- Si la screen necesita estado efímero, es `StatefulWidget` y crea su
+  ViewController en `initState` (ver sección 5).
 
-## 4. Diálogo
+## 4. Comunicación: ReactiveRepository primero
+
+El paso de cubits por valor (`BlocProvider.value`) es útil para **compartir
+una instancia** o inyectar una dependencia en un diálogo, pero no es el
+mecanismo para comunicar cubits entre sí.
+
+La sincronización Read/Write va por el repositorio:
+
+```text
+WriteCubit.create(dto)
+  → Repository.create(dto)
+    → DataSource / API
+    → notifyItemCreated(item)
+      → repository.eventStream
+        → ReadCubit actualiza su lista (sin refetch)
+```
+
+Reglas:
+
+- `ReadCubit` se suscribe al `eventStream` del `ReactiveRepository` en su
+  constructor y cancela en `close()`.
+- `WriteCubit` no conoce al `ReadCubit`; solo llama al repositorio.
+- El diálogo que crea su propio `WriteCubit` debe usar **la misma instancia**
+  del repositorio para que el evento llegue al `ReadCubit`.
+- No se pasa un `ReadCubit` a un diálogo solo para refrescar la lista; el
+  evento del repositorio ya lo hace.
+- `BlocProvider.value` se usa para que el diálogo comparta el `WriteCubit` de
+  la pantalla, no para sincronizar datos.
+
+Ver [ReactiveRepository](reactive_repository.md) y
+[Read / Write Cubits](read_write_cubits.md).
+
+### Diálogo
 
 Si el diálogo **reutiliza** un cubit de la pantalla, se pasa con
 `BlocProvider.value`:
@@ -286,13 +332,13 @@ Future<void> showItemEditor(
 }
 ```
 
-Si el diálogo es autónomo, el cubit se crea dentro del `showXxx` y se cierra
-con el diálogo:
+Si el diálogo es autónomo, el cubit se crea dentro del `showXxx` con el
+repositorio del árbol y se cierra con el diálogo:
 
 ```dart
 Future<void> showCreateItem(BuildContext context) {
   final repository = context.read<ItemsRepository>();
-  final writeCubit = WriteItemCubit(repository);
+  final writeCubit = WriteItemsCubit(repository);
 
   return showDialog(
     context: context,
@@ -310,39 +356,82 @@ Reglas:
 - Si la pantalla ya tiene el `WriteCubit`, pasarlo; no crear un segundo.
 - El diálogo no busca cubits de pantalla con `getIt`.
 
-## 5. Árbol de decisión
+## 5. ViewController: estado efímero
+
+El **ViewController** es un `ChangeNotifier` para el estado en memoria de la
+pantalla o de un componente reusable complejo. No es un cubit y no va en
+`lib/cubits/` ni en `lib/src/cubits/`.
+
+| Estado | Dónde vive |
+|---|---|
+| Datos del servidor (listas, CRUD) | Read/Write Cubit en `lib/src/cubits/{feature}/` |
+| Formularios, filtros, selecciones, wizard, carrito de una pantalla | ViewController en `modules/{feature}/view_controller.dart` |
+| Estado efímero interno de un componente reusable complejo | ViewController propio del componente |
+| Estado compartido entre secciones de la pantalla | ViewController + Mediator |
+
+Reglas:
+
+- Se crea en `initState` de la screen (o del componente) y muere con ella.
+- Se comparte con las secciones vía **Mediator** (`InheritedNotifier`), sin
+  prop-drilling.
+- El cubit recibe **DTOs**; nunca se le inyecta el ViewController.
+- Si un componente complejo necesita estado propio, tiene su VC; si ese estado
+  también lo necesita la pantalla, se eleva al VC de la screen.
+- Después de persistir, el action flow llama `viewController.clear()`; la
+  lista se sincroniza por el evento del repositorio, no por refetch.
+
+Ver [ViewController Pattern](view_controller_pattern.md) y
+[Mediator Pattern](mediator_pattern.md).
+
+## 6. Árbol de decisión
 
 ```text
 ¿Se usa sin BuildContext o desde muchos módulos no emparentados?
-  └── Sí → Global: lib/cubits/ + AppDependencies + getIt
-  └── No → ¿Lo comparten varios módulos con un ancestro común?
-        └── Sí → Compartido: lib/src/cubits/ + provider en el ancestro
-        └── No → ¿Es estado de una pantalla?
-              └── Sí → Pantalla: MultiBlocProvider en el entry
-              └── No → ¿Es una mutación efímera?
-                    └── Sí → Diálogo: BlocProvider.value o crear en showXxx
+  └── Sí → Global: lib/cubits/{feature}/ + AppDependencies + GetIt
+  └── No → ¿Es estado del servidor (listas, CRUD)?
+        └── Sí → No global: lib/src/cubits/{feature}/ + provider
+        └── No → ¿Es estado efímero de la pantalla/componente?
+              └── Sí → ViewController + Mediator
+              └── No → Revisar el diseño: probablemente sea un cubit
 ```
 
-## 6. Anti-patrones
+## 7. Anti-patrones
 
 - **`GlobalCubitProvider` o wrapper similar:** un widget que crea globales y
   las registra en GetIt. Reemplazado por `AppDependencies`.
+- **`modules/{feature}/cubit/`:** los no globales viven en
+  `lib/src/cubits/{feature}/`.
+- **Mezclar `lib/cubits` y `lib/src/cubits`:** si es global, GetIt; si no,
+  provider.
 - **Doble registro:** `getIt.registerSingleton` + `BlocProvider.value` de la
-  misma instancia. Elegir un solo camino.
+  misma instancia.
 - **Mezclar accesos:** `context.watch<GlobalCubit>()` para un cubit que solo
-  está en GetIt, o `getIt<ScreenCubit>()` para uno de pantalla.
+  está en GetIt, o `getIt<ScreenCubit>()` para uno no global.
 - **Crear cubits en `build()`** o dentro de un `BlocBuilder`.
 - **Crear el cubit de pantalla dentro de la variante responsive:** al cambiar
   el ancho se recrea el estado.
-- **Usar GetIt para estado de pantalla o diálogo.**
+- **Pasar un ReadCubit a un diálogo para refrescar:** usar el evento del
+  repositorio.
+- **Meter estado efímero en un cubit:** usar ViewController.
 - **Olvidar `getIt.reset()` en tests:** una instancia global contamina el
   siguiente test.
 
-## 7. Migración desde `GlobalCubitProvider`
+## 8. Migración
 
-Si el proyecto ya tiene un wrapper que crea globales:
+Si el proyecto tiene cubits en `modules/{feature}/cubit/`:
 
-1. Crear `AppDependencies` con los data sources, repositorios y globales.
+1. Mover `read_*` y `write_*` a `lib/src/cubits/{feature}/` (plural).
+2. Actualizar imports a `package:{app}/src/cubits/{feature}/...`.
+3. Mantener el `MultiBlocProvider` en la screen; no moverlo a la variante.
+4. Mover el estado efímero de los cubits al ViewController del módulo.
+5. Revisar que la comunicación Read/Write pase por `ReactiveRepository`.
+6. Si un cubit se usa en muchos módulos sin ancestro común, moverlo a
+   `lib/cubits/` y registrarlo en GetIt.
+7. Ejecutar `flutter analyze` y los tests con `getIt.reset()`.
+
+Si el proyecto tiene un `GlobalCubitProvider`:
+
+1. Crear `AppDependencies` con data sources, repositorios y globales.
 2. Mover la creación de `initState` a `AppDependencies.create()`.
 3. Registrar los globales en GetIt.
 4. Eliminar `getIt.unregister` y `close()` del `dispose` del wrapper.
@@ -352,15 +441,18 @@ Si el proyecto ya tiene un wrapper que crea globales:
 7. Borrar el wrapper y el `MultiBlocProvider` de globales.
 8. Ejecutar `flutter analyze` y los tests con `getIt.reset()`.
 
-## 8. Checklist
+## 9. Checklist
 
-- [ ] El cubit global está en `lib/cubits/{entity}/`.
-- [ ] Se crea en `AppDependencies.create()`, no en un widget.
-- [ ] Está registrado en GetIt y no se provee en el árbol.
-- [ ] Se consume con `bloc: getIt<T>()` o `getIt<T>()`.
-- [ ] No hay doble registro.
-- [ ] Los cubits de pantalla están en `MultiBlocProvider` arriba del dispatch.
-- [ ] Los diálogos usan `BlocProvider.value` o crean su cubit en `showXxx`.
+- [ ] El cubit global está en `lib/cubits/{feature}/`.
+- [ ] El cubit no global está en `lib/src/cubits/{feature}/` (plural).
+- [ ] Hay `read_*` y `write_*` separados.
+- [ ] Los globales se crean en `AppDependencies.create()`, no en un widget.
+- [ ] Los globales se consumen con `bloc: getIt<T>()` o `getIt<T>()`.
+- [ ] Los no globales se proveen en la screen o ancestro común.
+- [ ] La screen es el único lugar que instancia cubits.
+- [ ] El estado efímero está en el ViewController, no en un cubit.
+- [ ] La sincronización Read/Write usa `ReactiveRepository`.
+- [ ] No hay doble registro ni mezcla de accesos.
 - [ ] Los tests hacen `getIt.reset()`.
 
 ## Referencias
@@ -369,5 +461,7 @@ Si el proyecto ya tiene un wrapper que crea globales:
 - [Estructura de Pantalla](screen_structure.md)
 - [Diseño Responsive](responsive_design.md)
 - [Read / Write Cubits](read_write_cubits.md)
+- [ReactiveRepository](reactive_repository.md)
+- [ViewController Pattern](view_controller_pattern.md)
 - [Funciones de Diálogo](dialog_show_functions.md)
 - [Estructura del Proyecto Flutter](../style/project_structure_flutter.md)

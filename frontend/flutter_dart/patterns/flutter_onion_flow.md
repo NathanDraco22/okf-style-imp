@@ -24,7 +24,7 @@ Screen (UI)
 | Capa | Ubicación | Responsabilidad |
 |------|-----------|-----------------|
 | **Screen** | `lib/src/modules/{feature}/` | Widgets UI, BlocBuilder, BlocListener |
-| **Cubit** | `lib/cubits/{entity}/` (globales), `lib/src/cubits/{entity}/` (compartidos) o `modules/{feature}/cubit/` (solo si lo amerita) | Estado de la UI, llama al Repository |
+| **Cubit** | `lib/cubits/{feature}/` (globales, GetIt) o `lib/src/cubits/{feature}/` (no globales, provider; carpetas plurales) | Estado de la UI, llama al Repository |
 | **Repository** | `packages/*/domain/repositories/` | Lógica de negocio, convierte modelos |
 | **DataSource** | `packages/*/data/` | Cliente HTTP con `HttpService` mixin, singletons |
 | **Service** | `packages/*/services/` | HTTP raw, Hive, manejo de excepciones |
@@ -48,6 +48,8 @@ Usuario interactúa
 ## Reglas
 
 - **Screen** nunca importa DataSource o Service directamente
+- **Screen** es el único lugar que instancia los cubits no globales; las
+  variantes y widgets hijos los consumen por `context`
 - **Cubit** solo conoce Repository (inyectado por constructor)
 - **Repository** orquesta DataSource y aplica lógica de negocio
 - **DataSource** es una capa delgada que solo hace HTTP

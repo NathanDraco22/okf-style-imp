@@ -32,19 +32,24 @@ Vive solo mientras la pantalla existe: se crea en el `State` de la Screen y muer
 
 ```
 feature/
-├── feature_screen.dart          # Crea el ViewController en initState
-├── feature_mediator.dart        # InheritedWidget mudo, compartido web/mobile
+├── view/
+│   ├── feature_screen.dart      # Crea el ViewController y los cubits
+│   ├── mobile/                  # Variante mobile
+│   ├── tablet/                  # Variante tablet
+│   └── desktop/                 # Variante desktop
+├── feature_mediator.dart        # InheritedWidget mudo, compartido entre variantes
 ├── view_controller.dart         # ChangeNotifier: estado + acciones + mapeo
-├── cubit/                       # Solo si el feature lo amerita (ver jerarquía de cubits)
-│   ├── read_feature_cubit.dart  # Carga datos del servidor (canal lectura)
-│   └── write_feature_cubit.dart # Persiste DTOs (canal escritura)
-├── web/     (screen, sections/, widgets/)
-├── mobile/  (screen, widgets/)
-├── tablet/  (futuro, mismo patrón)
-└── actions/ (feature_payment.dart, feature_completion.dart)  # Flujos UI
+├── dialogs/                     # Show functions del módulo
+├── widgets/                     # Widgets compartidos del módulo
+└── actions/                     # Flujos UI (payment, completion, ...)
 ```
 
-**Jerarquía de cubits:** `lib/cubits/{entity}/` para cubits **globales** (auth, sesión) → `lib/src/cubits/{entity}/` para cubits **compartidos** entre módulos → `modules/{feature}/cubit/` solo cuando la lógica es exclusiva del feature (ver [Estructura del Proyecto Flutter](../style/project_structure_flutter.md)).
+**Jerarquía de cubits:** `lib/cubits/{feature}/` para cubits **globales**
+(GetIt) y `lib/src/cubits/{feature}/` para **todos los no globales**
+(provider, carpetas plurales: `products/`, `orders/`). No hay
+`modules/{feature}/cubit/`. Ver
+[Alcance y Ciclo de Vida de Cubits](cubit_scopes.md) y
+[Estructura del Proyecto Flutter](../style/project_structure_flutter.md).
 
 Flujo de datos:
 
@@ -207,6 +212,20 @@ El anti-patrón agrega acoplamiento sin beneficio: el cubit guarda el VC pero **
 | Persistir lo capturado | Cubit Write — recibe el DTO generado por el VC |
 | Flujo UI multi-paso (cobrar, confirmar, guardar) | Funciones de flujo top-level (ver [Funciones de Flujo](action_flow_functions.md)) |
 
+### Componentes reusables complejos
+
+Un componente reusable con estado efímero propio (selector con búsqueda,
+editor inline, carrusel con pasos) puede tener su propio ViewController:
+
+- Si el estado es **interno** y no lo necesita la pantalla, el VC vive con el
+  componente.
+- Si la pantalla o varias secciones necesitan ese estado, se **eleva** al VC
+  de la screen y se comparte por Mediator.
+- El componente **no crea cubits**: los recibe por `context` o callbacks. Los
+  cubits no globales viven en `lib/src/cubits/{feature}/` y los instancia la
+  screen.
+- El VC nunca se inyecta a un cubit.
+
 ## Reglas
 
 - **Un ViewController por pantalla**, creado en el `State` de la Screen raíz; muere con ella
@@ -228,5 +247,6 @@ El anti-patrón agrega acoplamiento sin beneficio: el cubit guarda el VC pero **
 - [Read / Write Cubits](read_write_cubits.md) — los canales de datos que persisten los DTOs
 - [ReactiveRepository Mixin](reactive_repository.md) — cómo el ReadCubit sincroniza la lista tras persistir, sin refetch
 - [Segmentación de Vistas UI](view_segmentation.md) — fuente de verdad única por pantalla
-- [Diseño Responsive](responsive_design.md) — VC compartido entre `web/` y `mobile/`
+- [Diseño Responsive](responsive_design.md) — VC compartido entre `mobile/`, `tablet/` y `desktop/`
+- [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md) — globales en GetIt; no globales en `src/cubits/`
 - [Inyección de Dependencias](di_flutter.md) — acceso a servicios globales desde el VC

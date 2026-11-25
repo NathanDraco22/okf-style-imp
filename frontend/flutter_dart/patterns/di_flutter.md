@@ -14,7 +14,7 @@ Hay tres mecanismos y cada uno tiene un alcance distinto:
 | DataSource | Constructor directo | Composition root | Toda la app |
 | Repositorio | `RepositoryProvider` | Composition root o módulo | La app o el módulo |
 | Cubit global | GetIt | `AppDependencies.create()` | Toda la app |
-| Cubit de pantalla | `BlocProvider` | Entry de la pantalla | La ruta |
+| Cubit no global | `BlocProvider` | Entry de la pantalla o ancestro común | La ruta/módulo |
 | Cubit de diálogo | `BlocProvider.value` o `BlocProvider` | `showXxx` | El diálogo |
 | Servicio | GetIt | `initServices()` | Toda la app |
 
@@ -120,6 +120,10 @@ eventos del `ReactiveRepository` y duplica estado.
 
 ## 3. Cubits locales
 
+Los cubits no globales viven en `lib/src/cubits/{feature}/`, en carpetas
+plurales (`products/`, `orders/`), con `read_*` y `write_*` separados. No hay
+`modules/{feature}/cubit/`.
+
 ### Pantalla
 
 ```dart
@@ -173,6 +177,13 @@ Future<void> showItemEditor(BuildContext context) {
 
 Si la pantalla ya tiene el `WriteCubit`, pasarlo con `BlocProvider.value` en
 lugar de crear otro.
+
+> **Sincronización:** `BlocProvider.value` comparte una instancia, pero no
+> comunica cubits. El `ReadCubit` se actualiza por el `eventStream` del
+> `ReactiveRepository` cuando el `WriteCubit` persiste. No pases un
+> `ReadCubit` al diálogo solo para refrescar la lista. Ver
+> [ReactiveRepository](reactive_repository.md) y
+> [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).
 
 ## 4. Cubits globales con GetIt
 

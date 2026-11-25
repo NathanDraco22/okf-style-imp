@@ -74,14 +74,13 @@ class ClientSelectorCard extends StatelessWidget { ... }
 
 | Carpeta | Contenido |
 |---------|-----------|
-| `lib/cubits/{entity}/` | Cubits **globales** de la app (GetIt) |
-| `lib/src/cubits/{entity}/` | Cubits **compartidos** entre módulos (provider) |
+| `lib/cubits/{feature}/` | Cubits **globales** de la app (GetIt) |
+| `lib/src/cubits/{feature}/` | Cubits **no globales** (provider), en carpetas plurales |
 | `modules/{feature}/view/{feature}_screen.dart` | Entry point del módulo (crea el ViewController, MultiBlocProvider) |
 | `modules/{feature}/{feature}_mediator.dart` | InheritedWidget mudo compartido entre variantes |
 | `modules/{feature}/view_controller.dart` | ChangeNotifier (estado local de la pantalla) |
-| `modules/{feature}/cubit/` | Cubits del módulo — **solo cuando lo amerita** |
-| `modules/{feature}/mobile/` | Variante mobile (< 600 px) |
-| `modules/{feature}/tablet/` | Variante tablet (600–839 px) |
-| `modules/{feature}/desktop/` | Variante desktop (>= 840 px) |
-| `modules/{feature}/desktop/sections/` | Secciones part de desktop |
+| `modules/{feature}/view/mobile/` | Variante mobile (< 600 px) |
+| `modules/{feature}/view/tablet/` | Variante tablet (600–839 px) |
+| `modules/{feature}/view/desktop/` | Variante desktop (>= 840 px) |
+| `modules/{feature}/view/desktop/sections/` | Secciones part de desktop |
 | `modules/{feature}/widgets/` | Widgets compartidos del módulo |

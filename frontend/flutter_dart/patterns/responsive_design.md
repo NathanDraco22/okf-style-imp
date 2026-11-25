@@ -132,8 +132,12 @@ class _Body extends StatelessWidget {
 > colocan dentro de una variante, redimensionar la ventana destruye y recrea
 > los cubits, se pierde el estado y se repiten las llamadas HTTP.
 
-Los cubits globales no se declaran aquí: viven en GetIt. Ver
-[Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).
+- El archivo se llama `{feature}_screen.dart` y es el **único** que instancia
+  los cubits no globales y el ViewController.
+- Las variantes `mobile/`, `tablet/` y `desktop/` no crean cubits ni
+  controllers.
+- Los cubits globales no se declaran aquí: viven en `lib/cubits/` y se
+  consumen con `getIt`. Ver [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).
 
 ## 4. Estructura de carpetas
 
@@ -256,6 +260,9 @@ cubit distinto para la tabla y para las cards.
 - Providers arriba del dispatch (ver sección 3).
 - No crear cubits, `TextEditingController` ni `ScrollController` dentro de una
   variante; se crean en el entry point o en el `view_controller` compartido.
+- El estado efímero (formulario, filtros, selecciones) vive en el
+  **ViewController** de la screen, no en las variantes; se comparte por
+  Mediator. Ver [ViewController Pattern](view_controller_pattern.md).
 - Un cambio de breakpoint no debe disparar un `getAll()` de nuevo.
 - Los cubits globales de GetIt no se reinician al cambiar de layout. Ver
   [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).

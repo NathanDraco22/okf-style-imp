@@ -50,6 +50,24 @@ class UnitResult {
 
 La **única excepción** al patrón son los managers globales (`DialogManager`, `LoadingDialogManager`): clases estáticas de utilidad para confirmaciones, errores, info y loading. No son show functions por entidad, pero viven en `widgets/dialogs/` como el resto.
 
+## Cubits y sincronización
+
+Un `showXxx` puede recibir un cubit existente con `BlocProvider.value`, pero
+eso sirve para **compartir la instancia**, no para comunicar cubits:
+
+- Si el diálogo reutiliza el `WriteCubit` de la pantalla, pasarlo por
+  `BlocProvider.value`; no crear un segundo.
+- Si el diálogo crea su propio `WriteCubit`, debe usar **la misma instancia**
+  del repositorio para que el evento llegue al `ReadCubit`.
+- La sincronización Write → Read va por el `eventStream` del
+  `ReactiveRepository`; no pases un `ReadCubit` al diálogo solo para refrescar
+  la lista.
+- El resultado del diálogo sigue siendo `Future<T?>`; si un DTO alcanza, no
+  uses el cubit como canal de retorno.
+
+Ver [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md) y
+[ReactiveRepository](reactive_repository.md).
+
 ## Estructura de carpetas
 
 ```

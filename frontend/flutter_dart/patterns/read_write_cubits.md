@@ -9,6 +9,14 @@ tags: [flutter, cubit, estado, separacion, patron]
 
 Se separan estrictamente los cubits de lectura y escritura para mantener estados simples y predecibles.
 
+> **Ubicación:** los no globales viven en `lib/src/cubits/{feature}/` (carpeta
+> plural: `products/`, `orders/`), con `read_*` y `write_*` separados. Los
+> globales van en `lib/cubits/{feature}/` y se registran en GetIt. Ver
+> [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).
+>
+> La separación Read/Write aplica a cubits de entidad (CRUD). Los globales de
+> sesión, configuración o tema pueden ser un cubit único.
+>
 > **CLI:** El comando `onion dart-cubit {entity}` genera ambos cubits (read + write) con sus estados y barrel files. El desarrollador completa los métodos con la lógica de negocio específica.
 >
 > **Reactive:** con `--reactive` (o Sí al prompt) el ReadCubit se genera **suscrito al `eventStream`** del repository (suscripción en el constructor, cancelación en `close()`), y el WriteCubit se genera con el repository inyectado y los métodos `create`/`update`/`delete` implementados con reset a `Initial`. Sin el flag, ambos cubits se generan con TODOs y la sincronización se hace manualmente vía `markXxx` desde la vista. Ver [ReactiveRepository Mixin](reactive_repository.md).
@@ -123,3 +131,5 @@ class WriteItemCubit extends Cubit<WriteItemState> {
 - **Nunca** un mismo cubit hace lectura y escritura
 - WriteCubit **resetea a Initial** después de cada éxito para permitir operaciones consecutivas
 - ReadCubit se suscribe al `eventStream` del Repository para reflejar cambios automáticamente
+- La comunicación Write → Read va por `ReactiveRepository`, no por paso de cubits
+- Los archivos viven en `lib/src/cubits/{feature}/`; no hay `modules/{feature}/cubit/`

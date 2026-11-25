@@ -1,5 +1,15 @@
 # Bitácora de cambios
 
+## 2026-11-25 — Clarificación de alcance de cubits y estructura del frontend
+
+- **Regla fijada:** globales en `lib/cubits/{feature}/` + GetIt; no globales en `lib/src/cubits/{feature}/` + provider, con carpetas plurales (`products/`, `orders/`). Se elimina `modules/{feature}/cubit/`.
+- **Read/Write separados** en cada carpeta; la sincronización Write → Read va por `ReactiveRepository`, no por paso de cubits.
+- **`BlocProvider.value`** en `showXxx` queda como recurso para compartir una instancia existente; no es el mecanismo de comunicación entre cubits.
+- **Screen única:** `view/{feature}_screen.dart` es el único lugar que instancia cubits no globales; las variantes `mobile/`, `tablet/` y `desktop/` no crean estado.
+- **ViewController** para estado efímero de pantalla y componentes reusables complejos; el cubit recibe DTOs, nunca el VC.
+- **Actualizados:** `cubit_scopes.md`, `project_structure_flutter.md`, `naming_conventions_flutter.md`, `flutter_onion_flow.md`, `view_controller_pattern.md`, `screen_structure.md`, `responsive_design.md`, `di_flutter.md`, `dialog_show_functions.md`, `read_write_cubits.md`, `cli_commands_flutter.md` y `README.md`.
+- **CLI pendiente:** `flutter-module` genera `cubit/` y `_view.dart`; el estándar es `src/cubits/{plural}/` y `view/{feature}_screen.dart`. `dart-cubit` genera singular. Se ajustará en el follow-up del CLI.
+
 ## 2026-11-25 — Patrones de Frontend: Responsive y Alcance de Cubits
 
 - **Reescrito `responsive_design.md`:**
@@ -10,7 +20,7 @@
   - Checklist de 375/600/839/840/1280 y regla de no recargar al redimensionar.
 - **Nuevo `cubit_scopes.md`:**
   - Globales en `lib/cubits/` → GetIt desde `AppDependencies.create()`; sin `GlobalCubitProvider`, sin doble registro.
-  - Compartidos en `lib/src/cubits/` y de pantalla en `modules/{feature}/cubit/` con providers.
+  - No globales en `lib/src/cubits/{feature}/` con providers (corregido en la entrada siguiente).
   - Diálogos con `BlocProvider.value` o creación en `showXxx`.
   - Consumo global con `bloc: getIt<T>()`; `getIt.reset()` en tests.
   - Anti-patrones y guía de migración desde el wrapper.

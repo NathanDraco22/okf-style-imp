@@ -154,10 +154,12 @@ El stack de frontend implementa una variante cliente de la **Arquitectura Onion*
 - Incluye combinadores (`AnyGateFilter`, `NotGateFilter`, `PredicateGateFilter`) y compatibilidad directa con `Expanded`/`Flexible`. Ver [gate_filter_pattern.md](frontend/flutter_dart/patterns/gate_filter_pattern.md).
 
 ### 8. Alcance de Cubits y Composition Root
-- **Global:** los cubits de `lib/cubits/` viven en GetIt; se crean una sola vez en `AppDependencies.create()` desde `main()` y se consumen con `bloc: getIt<T>()` o `getIt<T>()`.
-- **Pantalla/diálogo:** providers locales (`MultiBlocProvider` en el entry, `BlocProvider.value` en diálogos). Sin doble registro: un global no se provee en el árbol y un cubit de pantalla no se busca con GetIt.
+- **Global:** los cubits de `lib/cubits/{feature}/` viven en GetIt; se crean una sola vez en `AppDependencies.create()` desde `main()` y se consumen con `bloc: getIt<T>()` o `getIt<T>()`.
+- **No global:** todos los demás cubits viven en `lib/src/cubits/{feature}/` (carpetas plurales) y se proveen con `MultiBlocProvider` en la screen o ancestro común. No existe `modules/{feature}/cubit/`.
+- **Pantalla:** `view/{feature}_screen.dart` es el único lugar que instancia cubits no globales; el ViewController maneja el estado efímero.
+- **Sincronización:** Write → Repository → `eventStream` → Read. `BlocProvider.value` comparte instancias, no comunica cubits.
 - **Responsive:** los providers van arriba del dispatch mobile/tablet/desktop; cambiar el ancho no recrea el estado.
-- Ver [cubit_scopes.md](frontend/flutter_dart/patterns/cubit_scopes.md) y [responsive_design.md](frontend/flutter_dart/patterns/responsive_design.md).
+- Ver [cubit_scopes.md](frontend/flutter_dart/patterns/cubit_scopes.md), [responsive_design.md](frontend/flutter_dart/patterns/responsive_design.md) y [view_controller_pattern.md](frontend/flutter_dart/patterns/view_controller_pattern.md).
 
 ---
 

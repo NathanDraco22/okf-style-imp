@@ -7,19 +7,22 @@ tags: [flutter, screen, estructura, patron, ui]
 
 # Estructura de Pantalla
 
-Cada pantalla sigue la misma estructura de 3 partes.
+Cada pantalla sigue la misma estructura de 3 partes y vive en un archivo
+`{feature}_screen.dart` dentro de `modules/{feature}/view/`.
 
-> Esta estructura aplica a cubits de **pantalla** y **compartidos**. Los cubits
-> **globales** no se crean aquí: viven en GetIt y se consumen con
-> `bloc: getIt<T>()`. Ver [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).
+> Esta estructura aplica a cubits **no globales** (`lib/src/cubits/{feature}/`).
+> Los cubits **globales** no se crean aquí: viven en `lib/cubits/`, se
+> registran en GetIt y se consumen con `bloc: getIt<T>()`. Ver
+> [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).
 
 ## 1. Screen pública (entry point)
 
 Crea los cubits con sus dependencias y los provee al árbol.
 
 ```dart
-class ItemScreen extends StatelessWidget {
-  const ItemScreen({super.key});
+// modules/items/view/items_screen.dart
+class ItemsScreen extends StatelessWidget {
+  const ItemsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +30,12 @@ class ItemScreen extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (ctx) => ReadItemCubit(
-            itemRepository: RepositoryProvider.of<ItemRepository>(ctx),
+            RepositoryProvider.of<ItemRepository>(ctx),
           )..getAll(),
         ),
         BlocProvider(
           create: (ctx) => WriteItemCubit(
-            itemRepository: RepositoryProvider.of<ItemRepository>(ctx),
+            RepositoryProvider.of<ItemRepository>(ctx),
           ),
         ),
       ],
@@ -119,8 +122,15 @@ Reglas:
 - El `MultiBlocProvider` va **arriba** de `_Body`, nunca dentro de una
   variante. Si se coloca abajo, redimensionar la ventana recrea los cubits y
   se pierde el estado.
+- La screen es el **único** lugar que instancia los cubits no globales. Las
+  variantes y los widgets hijos los consumen por `context`.
 - Las variantes no crean cubits ni controllers; reciben datos y callbacks.
 - Los cubits globales de GetIt no se proveen aquí.
+
+Si la pantalla necesita estado efímero (formulario, filtros, selección), la
+screen es `StatefulWidget` y crea su **ViewController** en `initState`; lo
+comparte con las secciones vía Mediator. El cubit solo recibe DTOs. Ver
+[ViewController Pattern](view_controller_pattern.md).
 
 Ver [Diseño Responsive](responsive_design.md).
 

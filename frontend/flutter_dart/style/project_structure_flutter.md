@@ -34,18 +34,14 @@ lib/
 │   │   ├── app_config_manager.dart
 │   │   └── access_manager.dart
 │   │
-│   ├── cubits/                       # Cubits compartidos entre módulos (provider)
-│   │   └── orders/                   # read_orders, write_order
+│   ├── cubits/                       # Cubits NO globales (provider)
+│   │   ├── products/                 # read_products, write_products
+│   │   └── orders/                   # read_orders, write_orders
 │   │
 │   ├── modules/                      # Módulos de funcionalidad
 │   │   └── {feature}/
 │   │       ├── {feature}_mediator.dart # InheritedWidget compartido entre variantes
-│   │       ├── view_controller.dart   # ChangeNotifier (estado local de pantalla)
-│   │       ├── cubit/                 # Solo si el feature lo amerita
-│   │       │   ├── read_{entity}_cubit.dart
-│   │       │   ├── read_{entity}_state.dart
-│   │       │   ├── write_{entity}_cubit.dart
-│   │       │   └── write_{entity}_state.dart
+│   │       ├── view_controller.dart   # ChangeNotifier: estado efímero de la pantalla
 │   │       ├── view/
 │   │       │   ├── {feature}_screen.dart  # Entry point: MultiBlocProvider + dispatch
 │   │       │   ├── mobile/
@@ -122,10 +118,11 @@ packages/{app}_business/
 
 | Alcance | Ubicación | Mecanismo | Consumo |
 |---|---|---|---|
-| Global | `lib/cubits/{entity}/` | GetIt, creado en `app_dependencies.dart` | `bloc: getIt<T>()`, `getIt<T>()` |
-| Compartido | `lib/src/cubits/{entity}/` | Provider en el ancestro común | `context.watch/read` |
-| Pantalla | `modules/{feature}/cubit/` | `MultiBlocProvider` en el entry | `context.watch/read` |
-| Diálogo | `modules/{feature}/dialogs/` | `BlocProvider.value` o creación en `showXxx` | `context.watch/read` |
+| Global | `lib/cubits/{feature}/` | GetIt, creado en `app_dependencies.dart` | `bloc: getIt<T>()`, `getIt<T>()` |
+| No global (pantalla) | `lib/src/cubits/{feature}/` | `MultiBlocProvider` en la screen | `context.watch/read` |
+| No global (compartido) | `lib/src/cubits/{feature}/` | Provider en el ancestro común | `context.watch/read` |
+| Diálogo | `lib/src/cubits/{feature}/` | `BlocProvider.value` o creación en `showXxx` | `context.watch/read` |
+| Estado efímero | `modules/{feature}/view_controller.dart` | `ChangeNotifier` + Mediator | `Mediator.of(context)` |
 
 Detalle en [Alcance y Ciclo de Vida de Cubits](../patterns/cubit_scopes.md).
 
@@ -149,9 +146,14 @@ Detalle en [Diseño Responsive](../patterns/responsive_design.md).
 - Los DataSources, Repositorios y Models van en el **business package**
   (pure Dart).
 - Las Screens, Cubits y Widgets van en `lib/` del app (Flutter).
-- **Cubits globales** en `lib/cubits/` + GetIt; **compartidos** en
-  `lib/src/cubits/` con provider; **de feature** en
-  `modules/{feature}/cubit/` solo si lo amerita.
+- **Cubits globales** en `lib/cubits/{feature}/` + GetIt; **todos los no
+  globales** en `lib/src/cubits/{feature}/` con provider, en carpetas plurales
+  (`products/`, `orders/`). No existe `modules/{feature}/cubit/`.
+- La **screen** (`modules/{feature}/view/{feature}_screen.dart`) es el único
+  lugar que instancia los cubits no globales.
+- El **ViewController** (`modules/{feature}/view_controller.dart`) maneja el
+  estado efímero de la pantalla o de un componente reusable complejo; no es un
+  cubit y no va en `src/cubits/`.
 - `app_dependencies.dart` es el único composition root; `provider_container`
   solo provee repositorios.
 - `get_it_config.dart` registra servicios, no cubits.

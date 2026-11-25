@@ -78,6 +78,11 @@ onion flutter-module product
 > `mobile/`, `tablet/` y `desktop/` con `part` files se hace después a mano.
 > Ver [Diseño Responsive](responsive_design.md). El flag `--responsive` está
 > planificado, pero todavía no existe.
+>
+> **Estructura:** el CLI genera `cubit/` dentro del módulo y
+> `view/{plural}_view.dart`. El estándar es `lib/src/cubits/{plural}/` y
+> `view/{feature}_screen.dart`; mover y renombrar a mano hasta que el CLI lo
+> genere. Ver [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md).
 
 ## Vista standalone
 
@@ -121,8 +126,10 @@ El CLI genera la base, pero hay ajustes manuales que todavía no automatiza:
 
 | Limitación | Ajuste manual |
 |---|---|
-| `flutter-module` genera un solo `view/` | Crear `mobile/`, `tablet/`, `desktop/` y convertir el entry en `part` files. Ver [Diseño Responsive](responsive_design.md). |
-| No genera `MultiBlocProvider` | Agregar los providers en el entry de la pantalla. Ver [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md). |
+| `flutter-module` genera un solo `view/{plural}_view.dart` | Renombrar a `view/{feature}_screen.dart` y crear `mobile/`, `tablet/`, `desktop/` con `part` files. Ver [Diseño Responsive](responsive_design.md). |
+| `flutter-module` genera `cubit/` dentro del módulo | Mover `read_*` y `write_*` a `lib/src/cubits/{plural}/`. Ver [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md). |
+| `dart-cubit` genera `lib/src/cubits/{name}_cubit/` en singular | Renombrar a `lib/src/cubits/{plural}/`; el estándar usa carpetas plurales. |
+| No genera `MultiBlocProvider` | Agregar los providers en la screen, arriba del dispatch. Ver [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md). |
 | Los cubits importan `../../domain/...` | Si el business package está separado, cambiar a `package:{business}/{business}.dart`. |
 | `dart-view` genera un archivo único | Aplicar el split responsive a mano si la pantalla lo necesita. |
 | No hay flag `--responsive` | Planificado; por ahora el split es manual. |
