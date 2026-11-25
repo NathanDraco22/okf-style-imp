@@ -1,5 +1,13 @@
 # Bitácora de cambios
 
+## 2026-11-25 — Onion CLI 0.8.0: responsive y estructura de cubits
+
+- **`dart-cubit`:** genera `{output_dir}/{plural_name}/` (antes `{name}_cubit/`) y acepta `--business-package` para importar `package:{name}/{name}.dart`.
+- **`dart-view`:** genera `{plural_name}_screen.dart` (antes `_view.dart`) y acepta `--responsive`, que crea `mobile/`, `tablet/`, `desktop/` y `extensiones.dart` si falta.
+- **`flutter-module`:** los cubits van a `lib/src/cubits/{plural_name}/` (fuera del módulo); el screen queda en `view/{plural_name}_screen.dart` con `MultiBlocProvider`; flags `--responsive` y `--business-package`.
+- **Calidad:** tests con pytest (`test/test_dart_generators.py`), `testpaths = ["test"]` para no recolectar el template FastAPI; versión `0.7.3` → `0.8.0`.
+- **`cli_commands_flutter.md`:** actualizado a onion ≥ 0.8.0; se eliminaron las limitaciones de `_view.dart`, `cubit/` en el módulo, carpetas singulares y `--responsive` manual.
+
 ## 2026-11-25 — Clarificación de alcance de cubits y estructura del frontend
 
 - **Regla fijada:** globales en `lib/cubits/{feature}/` + GetIt; no globales en `lib/src/cubits/{feature}/` + provider, con carpetas plurales (`products/`, `orders/`). Se elimina `modules/{feature}/cubit/`.
@@ -8,7 +16,7 @@
 - **Screen única:** `view/{feature}_screen.dart` es el único lugar que instancia cubits no globales; las variantes `mobile/`, `tablet/` y `desktop/` no crean estado.
 - **ViewController** para estado efímero de pantalla y componentes reusables complejos; el cubit recibe DTOs, nunca el VC.
 - **Actualizados:** `cubit_scopes.md`, `project_structure_flutter.md`, `naming_conventions_flutter.md`, `flutter_onion_flow.md`, `view_controller_pattern.md`, `screen_structure.md`, `responsive_design.md`, `di_flutter.md`, `dialog_show_functions.md`, `read_write_cubits.md`, `cli_commands_flutter.md` y `README.md`.
-- **CLI pendiente:** `flutter-module` genera `cubit/` y `_view.dart`; el estándar es `src/cubits/{plural}/` y `view/{feature}_screen.dart`. `dart-cubit` genera singular. Se ajustará en el follow-up del CLI.
+- **CLI (resuelto en onion 0.8.0):** `flutter-module` genera `src/cubits/{plural}/` y `view/{feature}_screen.dart`; `dart-cubit` usa carpetas plurales; `--responsive` y `--business-package` están disponibles.
 
 ## 2026-11-25 — Patrones de Frontend: Responsive y Alcance de Cubits
 
