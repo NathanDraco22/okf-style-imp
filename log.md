@@ -1,5 +1,17 @@
 # Bitácora de cambios
 
+## 2026-11-25 — Patrón Counter Manager (correlativos atómicos)
+
+- **Nuevo patrón (`counter_manager.md`):**
+  - Documenta la generación de correlativos secuenciales por tipo de documento (`invoiceNumber`, `orderNumber`, etc.) con `find_one_and_update` + `$inc` + `upsert` + `ReturnDocument.AFTER`.
+  - Cadena completa sin Router/Controller: `CounterManager → CountersRepository → CountersDataSource → CountersCollection → MongoDB`.
+  - Variantes de scope: global, por tenant y por tenant + periodo; el reinicio periódico es implícito al cambiar la clave.
+  - `session` opcional: operación atómica de un solo documento sin transacción, o incremento transaccional junto con la inserción del documento.
+  - Concurrencia: índice único obligatorio, retry de `DuplicateKeyError` en el upsert y alternativa de pre-crear contadores.
+  - Formato centralizado en el manager (prefijo + padding), `set_counter` para importaciones y decisión consciente sobre gaps.
+- **Implementación de referencia:** `kardex-server/.../core/counter_manager/`; el documento corrige los puntos a adaptar (índice no único, scope multi-tenant, sesión requerida, excepción de migración, singleton con `__new__` y formato sin prefijo).
+- **Índices actualizados:** enlace agregado en `backend/python_fastapi/patterns/INDEX.md`, árbol y conteo del `README.md` (18 → 19 patrones) y bullet en Convenciones Críticas de Persistencia.
+
 ## 2026-11-22 — Gate Único con `GateFilter` Componibles
 
 - **Nuevo patrón (`gate_filter_pattern.md`):**

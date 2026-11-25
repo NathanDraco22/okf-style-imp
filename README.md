@@ -68,7 +68,7 @@ okf-style-imp/
         │   ├── INDEX.md
         │   ├── naming_conventions.md # snake_case, PascalCase, convenciones REST
         │   └── project_structure.md  # Árbol de carpetas app/ (routers, controllers, etc.)
-        └── patterns/                 # Catálogo de 18 patrones de diseño
+        └── patterns/                 # Catálogo de 19 patrones de diseño
             ├── INDEX.md              # Índice temático de patrones FastAPI
             ├── onion_flow.md         # Flujo Router → Controller → Repo → DataSource → Collection → DB
             ├── pipeline_steps.md     # Procesos multi-paso con contexto, steps y transacción
@@ -83,6 +83,7 @@ okf-style-imp/
             ├── timestamps.md         # createdAt / updatedAt en Unix milisegundos
             ├── search_pattern.md     # Búsqueda de texto: searchPrefixes + índice $text
             ├── mongo_transactions.md # Atomicidad multivariable con session
+            ├── counter_manager.md    # Correlativos atómicos con $inc + upsert
             ├── singleton.md          # get_instance() en DataSources y Collections
             ├── di_wiring.md          # DI manual por constructor
             ├── exception_handling.md # Jerarquía sellada de excepciones y handler global
@@ -178,6 +179,7 @@ Cuando un caso de uso combina validación, lecturas, varios documentos y movimie
 - **Timestamps en Milisegundos Unix:** Campos `createdAt: int` y `updatedAt: int` expresados en enteros UTC Unix ms (generados mediante `time_tools`).
 - **Búsqueda por Texto Óptima:** Combinación de prefijos generados (`searchPrefixes`) con índices `$text` de MongoDB ponderados por relevancia (`textScore`).
 - **Transacciones Atómicas:** Operaciones multivariable aseguradas mediante `async with await client.start_session() as session: async with session.start_transaction():`.
+- **Correlativos Atómicos:** Secuencias por tipo de documento generadas con `find_one_and_update` + `$inc` + `upsert` sobre `Counters`. El `CounterManager` centraliza el scope (global, tenant o periodo) y el formato del número. Ver [Counter Manager](backend/python_fastapi/patterns/counter_manager.md).
 
 ---
 

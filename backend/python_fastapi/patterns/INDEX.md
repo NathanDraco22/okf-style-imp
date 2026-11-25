@@ -34,6 +34,7 @@ Patrones de diseño y técnicas usados en proyectos FastAPI con arquitectura Oni
 - [Timestamps](timestamps.md) — createdAt/updatedAt como Unix ms
 - [Búsqueda por Texto](search_pattern.md) — searchPrefixes + $text index
 - [Transacciones MongoDB](mongo_transactions.md) — Atomicidad con session.start_transaction()
+- [Counter Manager](counter_manager.md) — Correlativos atómicos con $inc + upsert
 
 ## Infraestructura
 
