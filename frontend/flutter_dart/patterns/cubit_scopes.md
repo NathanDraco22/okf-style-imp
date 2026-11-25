@@ -254,12 +254,12 @@ class ItemsScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (ctx) => ReadProductsCubit(
+          create: (ctx) => ReadProductCubit(
             RepositoryProvider.of<ProductsRepository>(ctx),
           )..getAll(),
         ),
         BlocProvider(
-          create: (ctx) => WriteProductsCubit(
+          create: (ctx) => WriteProductCubit(
             RepositoryProvider.of<ProductsRepository>(ctx),
           ),
         ),
@@ -338,7 +338,7 @@ repositorio del árbol y se cierra con el diálogo:
 ```dart
 Future<void> showCreateItem(BuildContext context) {
   final repository = context.read<ItemsRepository>();
-  final writeCubit = WriteItemsCubit(repository);
+  final writeCubit = WriteItemCubit(repository);
 
   return showDialog(
     context: context,
