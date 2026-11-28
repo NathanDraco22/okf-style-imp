@@ -27,6 +27,10 @@ Si el comando falla, instalar ONION CLI antes de continuar.
 
 **Siempre** encapsular decisiones de negocio densas o repetidas, combinaciones de banderas, cálculo de beneficios y validaciones puras en una clase **Policy** inmutable dentro de `core/policies/<dominio>/` — nunca dispersar bloques de `if` en pantallas, cubits, routers, controllers o repositories.
 
+- **Ubicación obligatoria (frontend y backend):**
+  - Backend: `core/policies/<dominio>/<nombre>_policy.py` dentro del paquete de negocio.
+  - Frontend: `lib/src/core/policies/<dominio>/<nombre>_policy.dart` dentro del paquete de negocio.
+  - No se crean policies fuera de `core/policies/`; cada dominio tiene su subcarpeta y las decisiones compartidas van en `decisions/`.
 - **Pureza estricta:** una Policy **no hace I/O**, no consulta MongoDB, no conoce Flutter ni FastAPI y no muta estado.
 - **Taxonomía de retornos:** `bool` (binario), `enum`/`Enum` (excluyente), `T?`/`T | None` (opcional), objeto compuesto inmutable (múltiples atributos) y `PolicyDecision` (validación pura con `code` y `reason`).
 - **Composición:** las policies pequeñas se componen entre sí; el Cubit (frontend) o el Repository/PipelineStep (backend) obtiene los datos y delega la decisión a la Policy.

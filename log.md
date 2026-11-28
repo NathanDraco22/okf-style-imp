@@ -1,5 +1,12 @@
 # Bitácora de cambios
 
+## 2026-11-27 — Ubicación obligatoria de policies en frontend y backend
+
+- **Regla documentada:** toda policy vive en `core/policies/<dominio>/` del paquete de negocio, con subcarpeta por dominio; no se permiten policies fuera de esa carpeta.
+- **Backend:** `core/policies/<dominio>/<nombre>_policy.py` dentro del paquete de negocio.
+- **Frontend:** `lib/src/core/policies/<dominio>/<nombre>_policy.dart` dentro del paquete de negocio.
+- **Actualizados:** `AGENTS.md`, `README.md`, `frontend/flutter_dart/patterns/policy_object.md` y `backend/python_fastapi/patterns/policy_object.md`; las wikis de los proyectos consumidores se alinearon por separado.
+
 ## 2026-11-27 — Policy Object: decisiones de negocio centralizadas (Frontend y Backend)
 
 - **Patrón transversal (`policy_object.md` en Flutter/Dart y Python/FastAPI):**

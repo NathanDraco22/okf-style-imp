@@ -226,6 +226,8 @@ core/
         └── reservation_benefits.py     # Objetos de resultado / Enums
 ```
 
+En el paquete de negocio, la ruta obligatoria es `core/policies/<dominio>/<nombre>_policy.py`. El frontend replica la misma estructura en `lib/src/core/policies/<dominio>/` dentro de su paquete de negocio.
+
 ## Integración con Arquitectura Onion y Pipeline-Steps
 
 La separación de responsabilidades es estricta:

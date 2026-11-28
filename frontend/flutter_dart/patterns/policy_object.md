@@ -255,6 +255,8 @@ business_package/
             └── price_suggestion.dart
 ```
 
+En el paquete de negocio, la ruta obligatoria es `lib/src/core/policies/<dominio>/<nombre>_policy.dart`. El backend replica la misma estructura en `core/policies/<dominio>/` dentro de su paquete de negocio.
+
 En Flutter, el paquete **no depende de Flutter ni de `GetIt`**. El cubit de la app compone la policy y la expone.
 
 Para los modelos profundos que no tienen acceso al cubit (impresoras, PDFs, formatters) se mantiene el patrón de **resolver inyectado**:

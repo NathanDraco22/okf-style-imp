@@ -166,6 +166,7 @@ El stack de frontend implementa una variante cliente de la **Arquitectura Onion*
 
 ### 9. Policy Object: Decisiones de Negocio Centralizadas
 - Las decisiones que combinan varias banderas, calculan beneficios o realizan validaciones puras se extraen a una clase `Policy` inmutable en el paquete de negocio (`core/policies/<dominio>/`).
+- **Ubicación obligatoria (frontend y backend):** toda policy vive en `core/policies/<dominio>/` dentro del paquete de negocio; en Flutter, la ruta equivalente es `lib/src/core/policies/<dominio>/`. No se crean policies fuera de esas carpetas.
 - El Cubit compone la policy a partir de su estado actual y la expone como `policy`; no se usa un singleton global para evitar dos fuentes de verdad.
 - Regla de retorno (5 tipos): `bool` para sí/no, `enum` para estados excluyentes, `T?` para “existe o no”, objeto respuesta para resultados compuestos y `PolicyDecision` para validaciones puras con código y motivo.
 - Las policies se pueden componer entre sí, no hacen I/O, no conocen Flutter y se testean directamente. Las transiciones del Cubit (`Loaded`, `Saving`, `Error`, `clear`) se heredan sin estado paralelo.
