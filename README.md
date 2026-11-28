@@ -12,6 +12,7 @@ Este repositorio organiza la sabiduría técnica acumulada en proyectos de produ
 2. **Arquitectura Onion (Clean Architecture):** Separación unidireccional estricta de responsabilidades tanto en el frontend como en el backend. Las capas externas dependen de las internas, nunca al revés.
 3. **Prioridad CLI (`onion`):** Cero scaffolding manual. Toda estructura, clase o módulo nuevo se genera con `onion` CLI para garantizar consistencia y barrels actualizados.
 4. **Reactividad Segura y Gestión de Ciclo de Vida:** Control riguroso de streams y memoria. Toda suscripción reactiva cuenta con cancelación asíncrona garantizada (`close()`), guardas de emisión (`isClosed`) y liberación de recursos en repositorios (`disposeReactiveRepo()`).
+5. **Decisiones de Negocio Puras (`Policy Object`):** Toda decisión repetida, combinación de banderas, cálculo de beneficios o validación pura vive en una clase `Policy` inmutable dentro de `core/policies/` (sin I/O ni acoplamiento a Flutter/FastAPI), compartiendo la misma taxonomía de 5 retornos tipados (`bool`, `enum`/`Enum`, opcional, objeto compuesto y `PolicyDecision`) en frontend y backend.
 
 ---
 
@@ -32,12 +33,13 @@ okf-style-imp/
 │       │   ├── INDEX.md
 │       │   ├── naming_conventions_flutter.md  # Naming camelCase, PascalCase, archivos
 │       │   └── project_structure_flutter.md   # Árbol estándar de carpetas lib/src/
-│       └── patterns/                 # Catálogo de 26 patrones de diseño
+│       └── patterns/                 # Catálogo de 27 patrones de diseño
 │           ├── INDEX.md              # Índice temático de patrones Flutter
 │           ├── flutter_onion_flow.md # Flujo Screen → Cubit → Repo → DataSource → API
 │           ├── read_write_cubits.md  # Separación estricta ReadCubit vs WriteCubit
 │           ├── cross_cubit_event_sync.md # Sincronización desacoplada vía Repository Stream
 │           ├── global_formatter_resolver.md # Formatter puro + callback del Cubit global
+│           ├── policy_object.md      # Decisiones de negocio centralizadas con retornos tipados
 │           ├── reactive_repository.md# Mixin broadcast para reactividad sin cache
 │           ├── go_router_pattern.md  # Router reactivo a streams + lastKnownLocation
 │           ├── gate_filter_pattern.md # Gate único con filtros componibles y streams deduplicados
@@ -69,10 +71,11 @@ okf-style-imp/
         │   ├── INDEX.md
         │   ├── naming_conventions.md # snake_case, PascalCase, convenciones REST
         │   └── project_structure.md  # Árbol de carpetas app/ (routers, controllers, etc.)
-        └── patterns/                 # Catálogo de 19 patrones de diseño
+        └── patterns/                 # Catálogo de 20 patrones de diseño
             ├── INDEX.md              # Índice temático de patrones FastAPI
             ├── onion_flow.md         # Flujo Router → Controller → Repo → DataSource → Collection → DB
             ├── pipeline_steps.md     # Procesos multi-paso con contexto, steps y transacción
+            ├── policy_object.md      # Decisiones de negocio y validaciones puras con retornos tipados
             ├── router_pattern.md     # 5 endpoints CRUD estándar por entidad
             ├── controller_pattern.md # Inyección de repo, 404 handler y DTOs
             ├── repository_crud.md    # Reglas de negocio y orquestación
@@ -161,6 +164,13 @@ El stack de frontend implementa una variante cliente de la **Arquitectura Onion*
 - **Responsive:** los providers van arriba del dispatch mobile/tablet/desktop; cambiar el ancho no recrea el estado.
 - Ver [cubit_scopes.md](frontend/flutter_dart/patterns/cubit_scopes.md), [responsive_design.md](frontend/flutter_dart/patterns/responsive_design.md) y [view_controller_pattern.md](frontend/flutter_dart/patterns/view_controller_pattern.md).
 
+### 9. Policy Object: Decisiones de Negocio Centralizadas
+- Las decisiones que combinan varias banderas, calculan beneficios o realizan validaciones puras se extraen a una clase `Policy` inmutable en el paquete de negocio (`core/policies/<dominio>/`).
+- El Cubit compone la policy a partir de su estado actual y la expone como `policy`; no se usa un singleton global para evitar dos fuentes de verdad.
+- Regla de retorno (5 tipos): `bool` para sí/no, `enum` para estados excluyentes, `T?` para “existe o no”, objeto respuesta para resultados compuestos y `PolicyDecision` para validaciones puras con código y motivo.
+- Las policies se pueden componer entre sí, no hacen I/O, no conocen Flutter y se testean directamente. Las transiciones del Cubit (`Loaded`, `Saving`, `Error`, `clear`) se heredan sin estado paralelo.
+- Ver [policy_object.md](frontend/flutter_dart/patterns/policy_object.md).
+
 ---
 
 ## ⚡ Backend — Python / FastAPI
@@ -182,6 +192,10 @@ Request ──> Router ──> Controller ──> Repository ──> DataSource 
 ### Procesos Complejos
 
 Cuando un caso de uso combina validación, lecturas, varios documentos y movimientos transaccionales, se orquesta con **Pipeline-Steps**: un contexto compartido, pasos independientes y un resultado final tipado. El orquestador conserva la transacción; el mutex y el retry quedan en el Manager que lo invoca; los steps no hacen commit ni abort. Ver [Pipeline-Steps](backend/python_fastapi/patterns/pipeline_steps.md).
+
+### Decisiones de Negocio (Policy Object)
+
+Las decisiones repetidas, reglas compuestas y validaciones puras se encapsulan en clases `Policy` inmutables (`@dataclass(frozen=True)`) dentro de `core/policies/<dominio>/`, sin I/O ni dependencias de FastAPI/MongoDB. Retornan `bool`, `Enum`, `T | None`, objeto compuesto o `PolicyDecision` (con `code` y `reason`); los `Repository` o `Pipeline-Steps` cargan los datos, consultan la policy y traducen rechazos a `BusinessRuleException`. Ver [Policy Object](backend/python_fastapi/patterns/policy_object.md).
 
 ### Convenciones Críticas de Persistencia
 - **Soft Delete Universal:** Todas las entidades implementan el campo booleano `isDeleted: bool = False`. El borrado lógico se realiza con `update_one({"$set": {"isDeleted": True}})`. Las lecturas excluyen automáticamente registros eliminados (`{"isDeleted": False}`).

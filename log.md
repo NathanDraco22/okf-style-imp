@@ -1,5 +1,19 @@
 # Bitácora de cambios
 
+## 2026-11-27 — Policy Object: decisiones de negocio centralizadas (Frontend y Backend)
+
+- **Patrón transversal (`policy_object.md` en Flutter/Dart y Python/FastAPI):**
+  - Extrae decisiones de negocio densas o repetidas, cálculos de beneficios y validaciones puras a una clase `Policy` inmutable en `core/policies/<dominio>/` (sin I/O, sin Flutter ni FastAPI).
+  - Regla de retorno unificada de 5 tipos: `bool` (binario), `enum`/`Enum` (excluyente), `T?`/`T | None` (opcional), objeto compuesto inmutable (múltiples datos) y `PolicyDecision` (validación pura con `code` y `reason`).
+  - Documenta **composición de policies** (delegar reglas transversales como `AgePolicy` dentro de `ReservationPolicy`).
+  - **Frontend (Flutter/Dart):** el Cubit compone la policy desde su estado actual (`policy`), sin singleton global ni duplicación de banderas como getters; hereda las transiciones `Initial` / `Loading` / `Loaded` / `Saving` / `Error` / `clear`.
+  - **Backend (Python/FastAPI):** nueva guía completa con ejemplos de reservación (`ReservationPolicy`, `ReservationBenefits`, `WineExtensionOffer`), integración con Arquitectura Onion / `Pipeline-Steps` (traducción de `PolicyDecision.deny(...)` a `BusinessRuleException`), anti-patrones y testing parametrizado con `pytest`.
+- **Promoción a prioridad máxima:**
+  - `AGENTS.md`: incorporado como **Regla #2: Decisiones de Negocio en Policy Objects** y lectura obligatoria en Fase 2 para ambos stacks.
+  - `README.md`: incorporado como **Principio Rector #5**, conteo backend actualizado de 19 a 20 patrones, sección resumen en Backend y actualización de la sección 9 en Frontend.
+- **Índices:** enlaces registrados en `frontend/flutter_dart/patterns/INDEX.md` y `backend/python_fastapi/patterns/INDEX.md` (sección “Decisiones de negocio”), con enlaces cruzados entre ambos documentos.
+- **Implementación de referencia (Frontend):** `kardex_app_front/packages/kardex_business/lib/src/core/policies/app_settings/app_settings_policy.dart`, compuesta por `AppSettingsCubit.policy` y consumida por turnos, moneda secundaria, margen sugerido y visualización de factura.
+
 ## 2026-11-25 — Onion CLI 0.8.0: responsive y estructura de cubits
 
 - **`dart-cubit`:** genera `{output_dir}/{plural_name}/` (antes `{name}_cubit/`) y acepta `--business-package` para importar `package:{name}/{name}.dart`.

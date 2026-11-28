@@ -23,6 +23,16 @@ onion --help
 
 Si el comando falla, instalar ONION CLI antes de continuar.
 
+## Regla #2: Decisiones de Negocio en Policy Objects
+
+**Siempre** encapsular decisiones de negocio densas o repetidas, combinaciones de banderas, cálculo de beneficios y validaciones puras en una clase **Policy** inmutable dentro de `core/policies/<dominio>/` — nunca dispersar bloques de `if` en pantallas, cubits, routers, controllers o repositories.
+
+- **Pureza estricta:** una Policy **no hace I/O**, no consulta MongoDB, no conoce Flutter ni FastAPI y no muta estado.
+- **Taxonomía de retornos:** `bool` (binario), `enum`/`Enum` (excluyente), `T?`/`T | None` (opcional), objeto compuesto inmutable (múltiples atributos) y `PolicyDecision` (validación pura con `code` y `reason`).
+- **Composición:** las policies pequeñas se componen entre sí; el Cubit (frontend) o el Repository/PipelineStep (backend) obtiene los datos y delega la decisión a la Policy.
+
+Ver [Policy Object Backend](backend/python_fastapi/patterns/policy_object.md) y [Policy Object Frontend](frontend/flutter_dart/patterns/policy_object.md).
+
 ## Workflow para el agente
 
 ### Fase 1 — Descubrimiento (al iniciar)
@@ -42,12 +52,14 @@ Según la tecnología involucrada, leer **obligatoriamente** la sección corresp
 #### Backend (Python/FastAPI)
 1. [Estilo FastAPI](backend/python_fastapi/style/INDEX.md) — convenciones de código
 2. [Patrones FastAPI](backend/python_fastapi/patterns/INDEX.md) — patrones de diseño
-3. [CLI Backend](backend/python_fastapi/patterns/cli_commands.md) — comandos `onion` para backend
+3. [Policy Object Backend](backend/python_fastapi/patterns/policy_object.md) — decisiones de negocio y validaciones puras
+4. [CLI Backend](backend/python_fastapi/patterns/cli_commands.md) — comandos `onion` para backend
 
 #### Frontend (Flutter/Dart)
 1. [Estilo Flutter](frontend/flutter_dart/style/INDEX.md) — convenciones de código
 2. [Patrones Flutter](frontend/flutter_dart/patterns/INDEX.md) — patrones de diseño
-3. [CLI Flutter](frontend/flutter_dart/patterns/cli_commands_flutter.md) — comandos `onion` para frontend
+3. [Policy Object Frontend](frontend/flutter_dart/patterns/policy_object.md) — decisiones de negocio y validaciones puras
+4. [CLI Flutter](frontend/flutter_dart/patterns/cli_commands_flutter.md) — comandos `onion` para frontend
 
 ## Convenciones del bundle
 

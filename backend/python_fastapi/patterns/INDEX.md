@@ -15,6 +15,10 @@ Patrones de diseño y técnicas usados en proyectos FastAPI con arquitectura Oni
 
 - [Pipeline-Steps](pipeline_steps.md) — Contexto compartido, pasos independientes, transacción y resultado final (lógica de orquestación; el CLI no genera los steps)
 
+## Decisiones de negocio
+
+- [Policy Object](policy_object.md) — Decisiones y validaciones puras en `core/policies/` con retornos tipados (`bool`, `Enum`, `T | None`, objeto compuesto o `PolicyDecision`)
+
 ## Capas
 
 - [Patrón Router](router_pattern.md) — 5 endpoints CRUD por entidad

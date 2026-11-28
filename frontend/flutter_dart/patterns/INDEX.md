@@ -19,6 +19,10 @@ Patrones de diseño y técnicas usados en Flutter y Dart.
 - [ListResponse Flutter](list_response_flutter.md) — Response genérico de listas con count
 - [Query Params Tipados](query_params.md) — Filtros con objetos toMap()
 
+## Decisiones de negocio
+
+- [Policy Object](policy_object.md) — Decisiones y validaciones puras centralizadas con retornos tipados (`bool`, `enum`, `T?`, objeto respuesta o `PolicyDecision`)
+
 ## State Management (Cubits)
 
 - [Alcance y Ciclo de Vida de Cubits](cubit_scopes.md) — Globales en `lib/cubits`/GetIt; no globales en `src/cubits`/providers
